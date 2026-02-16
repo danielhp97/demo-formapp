@@ -3,11 +3,25 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Assessment Demo App</title>
+    <title>Mental Ratio Assessment</title>
     <script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
     <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
     <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
     <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        'brain-pink': '#E91E8C',
+                        'brain-blue': '#4A9EBD',
+                        'brain-navy': '#2C3E50',
+                        'brain-purple': '#4A3B5C',
+                    }
+                }
+            }
+        }
+    </script>
 </head>
 <body>
     <div id="root"></div>
@@ -15,10 +29,16 @@
     <script type="text/babel">
         const { useState } = React;
         
-        // Lucide icons as inline SVGs
+        // Icons
         const User = ({ className }) => (
             <svg className={className} fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+            </svg>
+        );
+        
+        const ClipboardList = ({ className }) => (
+            <svg className={className} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01" />
             </svg>
         );
         
@@ -27,361 +47,557 @@
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
             </svg>
         );
-        
-        const TrendingUp = ({ className }) => (
+
+        const UserCircle = ({ className }) => (
             <svg className={className} fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6" />
-            </svg>
-        );
-        
-        const Award = ({ className }) => (
-            <svg className={className} fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4M7.835 4.697a3.42 3.42 0 001.946-.806 3.42 3.42 0 014.438 0 3.42 3.42 0 001.946.806 3.42 3.42 0 013.138 3.138 3.42 3.42 0 00.806 1.946 3.42 3.42 0 010 4.438 3.42 3.42 0 00-.806 1.946 3.42 3.42 0 01-3.138 3.138 3.42 3.42 0 00-1.946.806 3.42 3.42 0 01-4.438 0 3.42 3.42 0 00-1.946-.806 3.42 3.42 0 01-3.138-3.138 3.42 3.42 0 00-.806-1.946 3.42 3.42 0 010-4.438 3.42 3.42 0 00.806-1.946 3.42 3.42 0 013.138-3.138z" />
-            </svg>
-        );
-        
-        const ArrowLeft = ({ className }) => (
-            <svg className={className} fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 19l-7-7m0 0l7-7m-7 7h18" />
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5.121 17.804A13.937 13.937 0 0112 16c2.5 0 4.847.655 6.879 1.804M15 10a3 3 0 11-6 0 3 3 0 016 0zm6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
             </svg>
         );
 
-        function DemoApp() {
+        const Users = ({ className }) => (
+            <svg className={className} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z" />
+            </svg>
+        );
+
+        const Crown = ({ className }) => (
+            <svg className={className} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 3v4M3 5h4M6 17v4m-2-2h4m5-16l2.286 6.857L21 12l-5.714 2.143L13 21l-2.286-6.857L5 12l5.714-2.143L13 3z" />
+            </svg>
+        );
+
+        // 18 questions across 6 categories (3 each)
+        const questions = [
+          // Resilience (RES)
+          { id: 1, category: 'Resilience', short: 'RES', text: 'I thrive under external pressure and perform my best when stakes are high' },
+          { id: 2, category: 'Resilience', short: 'RES', text: 'I succeed in hostile environments and maintain composure when facing adversity' },
+          { id: 3, category: 'Resilience', short: 'RES', text: 'I adapt quickly to change and bounce back from setbacks' },
+          
+          // Discipline (DIS)
+          { id: 4, category: 'Discipline', short: 'DIS', text: 'I demonstrate fair play and maintain integrity in all situations' },
+          { id: 5, category: 'Discipline', short: 'DIS', text: 'I avoid cautionable offenses and maintain self-control' },
+          { id: 6, category: 'Discipline', short: 'DIS', text: 'I am dedicated and goal-oriented in my approach' },
+          
+          // Game Intelligence (G.IN)
+          { id: 7, category: 'Game Intelligence', short: 'G.IN', text: 'I think ahead and demonstrate creativity in my approach' },
+          { id: 8, category: 'Game Intelligence', short: 'G.IN', text: 'I have strong problem-solving abilities' },
+          { id: 9, category: 'Game Intelligence', short: 'G.IN', text: 'I identify and use opportunities effectively' },
+          
+          // Focus (FOC)
+          { id: 10, category: 'Focus', short: 'FOC', text: 'I possess strong reframing skills and can shift perspective when needed' },
+          { id: 11, category: 'Focus', short: 'FOC', text: 'I demonstrate high self-awareness' },
+          { id: 12, category: 'Focus', short: 'FOC', text: 'I maintain emotional control and readiness to overcome failure' },
+          
+          // Influence (INF)
+          { id: 13, category: 'Influence', short: 'INF', text: 'I maintain a positive attitude that impacts those around me' },
+          { id: 14, category: 'Influence', short: 'INF', text: 'I demonstrate leadership and assertiveness' },
+          { id: 15, category: 'Influence', short: 'INF', text: 'I am a team player and level-headed in group settings' },
+          
+          // Intensity (INT)
+          { id: 16, category: 'Intensity', short: 'INT', text: 'I show strong determination in pursuing my goals' },
+          { id: 17, category: 'Intensity', short: 'INT', text: 'I bring consistent energy and vigor to my work' },
+          { id: 18, category: 'Intensity', short: 'INT', text: 'I am willing to take calculated risks' },
+        ];
+
+        function MentalRatioApp() {
           const [currentPage, setCurrentPage] = useState('user');
-          const [formData, setFormData] = useState({
-            technical: '',
-            communication: '',
-            leadership: '',
-            innovation: ''
-          });
-          const [scores, setScores] = useState(null);
+          const [answers, setAnswers] = useState({});
+          const [results, setResults] = useState(null);
 
-          // Mock user data
           const userData = {
             name: "Alex Johnson",
             email: "alex.johnson@example.com",
             joinDate: "January 2024",
-            totalAssessments: 12,
-            pastScores: [
-              { date: "Feb 10, 2025", technical: 85, communication: 92, leadership: 78, innovation: 88 },
-              { date: "Jan 28, 2025", technical: 82, communication: 89, leadership: 75, innovation: 85 },
-              { date: "Jan 15, 2025", technical: 79, communication: 87, leadership: 73, innovation: 82 }
+            totalAssessments: 3,
+            pastAssessments: [
+              { 
+                date: "Feb 10, 2025", 
+                overall: 87,
+                scores: { 'RES': 93, 'DIS': 87, 'G.IN': 93, 'FOC': 88, 'INF': 87, 'INT': 75 }
+              },
+              { 
+                date: "Jan 28, 2025", 
+                overall: 84,
+                scores: { 'RES': 90, 'DIS': 85, 'G.IN': 90, 'FOC': 85, 'INF': 85, 'INT': 72 }
+              },
+              { 
+                date: "Jan 15, 2025", 
+                overall: 81,
+                scores: { 'RES': 87, 'DIS': 82, 'G.IN': 87, 'FOC': 82, 'INF': 82, 'INT': 68 }
+              }
             ]
           };
 
-          const calculateScores = () => {
-            // Simple scoring logic - convert responses to scores
-            const scoreMapping = {
-              technical: formData.technical.length * 5,
-              communication: formData.communication.length * 4,
-              leadership: formData.leadership.length * 6,
-              innovation: formData.innovation.length * 5
-            };
-
-            // Cap at 100
-            const calculatedScores = {
-              technical: Math.min(100, scoreMapping.technical),
-              communication: Math.min(100, scoreMapping.communication),
-              leadership: Math.min(100, scoreMapping.leadership),
-              innovation: Math.min(100, scoreMapping.innovation)
-            };
-
-            setScores(calculatedScores);
+          const handleAnswerChange = (questionId, value) => {
+            setAnswers(prev => ({ ...prev, [questionId]: parseInt(value) }));
           };
 
-          const handleSubmit = (e) => {
+          const calculateResults = (e) => {
             e.preventDefault();
-            calculateScores();
+            
+            const categoryScores = {};
+            const categoryQuestions = {};
+            
+            questions.forEach(q => {
+              const key = q.short;
+              if (!categoryScores[key]) {
+                categoryScores[key] = 0;
+                categoryQuestions[key] = 0;
+              }
+              if (answers[q.id]) {
+                categoryScores[key] += answers[q.id];
+                categoryQuestions[key]++;
+              }
+            });
+
+            const results = {};
+            Object.keys(categoryScores).forEach(category => {
+              const avg = categoryScores[category] / categoryQuestions[category];
+              results[category] = Math.round((avg / 5) * 100);
+            });
+
+            setResults(results);
+            setCurrentPage('results');
           };
 
-          const getScoreColor = (score) => {
-            if (score >= 80) return 'text-green-600';
-            if (score >= 60) return 'text-yellow-600';
-            return 'text-red-600';
+          const isFormComplete = () => questions.every(q => answers[q.id] !== undefined);
+
+          const resetAssessment = () => {
+            setAnswers({});
+            setResults(null);
+            setCurrentPage('assessment');
           };
 
-          const getAverageScore = (scoreObj) => {
-            const values = Object.values(scoreObj);
+          const getOverallScore = (scores) => {
+            const values = Object.values(scores);
             return Math.round(values.reduce((a, b) => a + b, 0) / values.length);
           };
 
-          if (currentPage === 'user') {
-            return (
-              <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 p-8">
-                <div className="max-w-4xl mx-auto">
-                  {/* Header */}
-                  <div className="bg-white rounded-lg shadow-lg p-8 mb-6">
-                    <div className="flex items-center gap-4 mb-6">
-                      <div className="w-20 h-20 bg-indigo-600 rounded-full flex items-center justify-center">
-                        <User className="w-10 h-10 text-white" />
-                      </div>
-                      <div>
-                        <h1 className="text-3xl font-bold text-gray-900">{userData.name}</h1>
-                        <p className="text-gray-600">{userData.email}</p>
-                        <p className="text-sm text-gray-500">Member since {userData.joinDate}</p>
-                      </div>
-                    </div>
+          const getCategoryColor = (short) => {
+            const colors = {
+              'RES': 'bg-red-600',
+              'DIS': 'bg-blue-600',
+              'G.IN': 'bg-yellow-600',
+              'FOC': 'bg-orange-600',
+              'INF': 'bg-green-600',
+              'INT': 'bg-teal-600'
+            };
+            return colors[short] || 'bg-gray-600';
+          };
 
-                    <div className="grid grid-cols-2 gap-4 mb-6">
-                      <div className="bg-indigo-50 p-4 rounded-lg">
-                        <div className="flex items-center gap-2 mb-2">
-                          <BarChart3 className="w-5 h-5 text-indigo-600" />
-                          <span className="text-sm font-medium text-gray-700">Total Assessments</span>
-                        </div>
-                        <p className="text-3xl font-bold text-indigo-600">{userData.totalAssessments}</p>
-                      </div>
-                      <div className="bg-green-50 p-4 rounded-lg">
-                        <div className="flex items-center gap-2 mb-2">
-                          <TrendingUp className="w-5 h-5 text-green-600" />
-                          <span className="text-sm font-medium text-gray-700">Latest Average</span>
-                        </div>
-                        <p className="text-3xl font-bold text-green-600">
-                          {getAverageScore(userData.pastScores[0])}
-                        </p>
-                      </div>
-                    </div>
+          const getCategoryName = (short) => {
+            const names = {
+              'RES': 'Resilience',
+              'DIS': 'Discipline',
+              'G.IN': 'Game Intelligence',
+              'FOC': 'Focus',
+              'INF': 'Influence',
+              'INT': 'Intensity'
+            };
+            return names[short] || short;
+          };
 
-                    <button
-                      onClick={() => setCurrentPage('query')}
-                      className="w-full bg-indigo-600 text-white py-3 rounded-lg font-semibold hover:bg-indigo-700 transition"
-                    >
-                      Start New Assessment
-                    </button>
-                  </div>
-
-                  {/* Past Scores */}
-                  <div className="bg-white rounded-lg shadow-lg p-8">
-                    <h2 className="text-2xl font-bold text-gray-900 mb-6 flex items-center gap-2">
-                      <Award className="w-6 h-6 text-indigo-600" />
-                      Past Assessments
-                    </h2>
-
-                    <div className="space-y-4">
-                      {userData.pastScores.map((score, idx) => (
-                        <div key={idx} className="border border-gray-200 rounded-lg p-4 hover:border-indigo-300 transition">
-                          <div className="flex justify-between items-center mb-3">
-                            <span className="text-sm text-gray-600">{score.date}</span>
-                            <span className="text-lg font-bold text-indigo-600">
-                              Avg: {getAverageScore(score)}
-                            </span>
-                          </div>
-                          <div className="grid grid-cols-4 gap-3">
-                            <div>
-                              <p className="text-xs text-gray-500 mb-1">Technical</p>
-                              <p className={`text-lg font-bold ${getScoreColor(score.technical)}`}>
-                                {score.technical}
-                              </p>
-                            </div>
-                            <div>
-                              <p className="text-xs text-gray-500 mb-1">Communication</p>
-                              <p className={`text-lg font-bold ${getScoreColor(score.communication)}`}>
-                                {score.communication}
-                              </p>
-                            </div>
-                            <div>
-                              <p className="text-xs text-gray-500 mb-1">Leadership</p>
-                              <p className={`text-lg font-bold ${getScoreColor(score.leadership)}`}>
-                                {score.leadership}
-                              </p>
-                            </div>
-                            <div>
-                              <p className="text-xs text-gray-500 mb-1">Innovation</p>
-                              <p className={`text-lg font-bold ${getScoreColor(score.innovation)}`}>
-                                {score.innovation}
-                              </p>
-                            </div>
-                          </div>
-                        </div>
-                      ))}
-                    </div>
-                  </div>
+          return (
+            <div className="flex min-h-screen" style={{ background: 'linear-gradient(135deg, #2C3E50 0%, #4A3B5C 50%, #2C3E50 100%)' }}>
+              {/* Sidebar */}
+              <div className="w-64 bg-brain-navy/90 backdrop-blur-sm text-white p-6 flex flex-col border-r border-brain-pink/20">
+                <div className="mb-8">
+                  <h1 className="text-2xl font-bold mb-1" style={{ color: '#E91E8C' }}>Mental Ratio</h1>
+                  <p className="text-gray-300 text-sm">Assessment Report</p>
                 </div>
-              </div>
-            );
-          }
 
-          if (currentPage === 'query') {
-            return (
-              <div className="min-h-screen bg-gradient-to-br from-purple-50 to-pink-100 p-8">
-                <div className="max-w-3xl mx-auto">
+                <nav className="space-y-2 flex-1">
                   <button
                     onClick={() => setCurrentPage('user')}
-                    className="mb-6 flex items-center gap-2 text-gray-700 hover:text-gray-900 transition"
+                    className={`w-full flex items-center gap-3 px-4 py-3 rounded-lg transition ${
+                      currentPage === 'user' 
+                        ? 'bg-brain-pink/20 font-semibold border border-brain-pink/40' 
+                        : 'hover:bg-white/5'
+                    }`}
                   >
-                    <ArrowLeft className="w-5 h-5" />
-                    Back to Profile
+                    <UserCircle className="w-5 h-5" />
+                    <span>User</span>
+                  </button>
+                  
+                  <button
+                    onClick={() => setCurrentPage('assessment')}
+                    className={`w-full flex items-center gap-3 px-4 py-3 rounded-lg transition ${
+                      currentPage === 'assessment' 
+                        ? 'bg-brain-pink/20 font-semibold border border-brain-pink/40' 
+                        : 'hover:bg-white/5'
+                    }`}
+                  >
+                    <ClipboardList className="w-5 h-5" />
+                    <span>Self-Evaluation</span>
+                  </button>
+                  
+                  <button
+                    onClick={() => setCurrentPage('results')}
+                    className={`w-full flex items-center gap-3 px-4 py-3 rounded-lg transition ${
+                      currentPage === 'results' 
+                        ? 'bg-brain-pink/20 font-semibold border border-brain-pink/40' 
+                        : 'hover:bg-white/5'
+                    } ${!results && 'opacity-50 cursor-not-allowed'}`}
+                    disabled={!results}
+                  >
+                    <BarChart3 className="w-5 h-5" />
+                    <span>Results</span>
                   </button>
 
-                  <div className="bg-white rounded-lg shadow-lg p-8">
-                    <h1 className="text-3xl font-bold text-gray-900 mb-6">Assessment Form</h1>
-                    
-{!scores ? (
-                      <form onSubmit={handleSubmit} className="space-y-6">
-                        <div>
-                          <label className="block text-sm font-medium text-gray-700 mb-2">
-                            Technical Skills
-                          </label>
-                          <textarea
-                            value={formData.technical}
-                            onChange={(e) => setFormData({...formData, technical: e.target.value})}
-                            className="w-full border border-gray-300 rounded-lg p-3 focus:ring-2 focus:ring-purple-500 focus:border-transparent"
-                            rows="3"
-                            placeholder="Describe your technical expertise and recent projects..."
-                            required
-                          />
-                        </div>
+                  <button
+                    onClick={() => setCurrentPage('external')}
+                    className={`w-full flex items-center gap-3 px-4 py-3 rounded-lg transition ${
+                      currentPage === 'external' 
+                        ? 'bg-brain-pink/20 font-semibold border border-brain-pink/40' 
+                        : 'hover:bg-white/5'
+                    }`}
+                  >
+                    <Users className="w-5 h-5" />
+                    <span className="flex items-center gap-2">
+                      External Evaluation
+                      <Crown className="w-3 h-3 text-yellow-300" />
+                    </span>
+                  </button>
+                </nav>
 
-                        <div>
-                          <label className="block text-sm font-medium text-gray-700 mb-2">
-                            Communication
-                          </label>
-                          <textarea
-                            value={formData.communication}
-                            onChange={(e) => setFormData({...formData, communication: e.target.value})}
-                            className="w-full border border-gray-300 rounded-lg p-3 focus:ring-2 focus:ring-purple-500 focus:border-transparent"
-                            rows="3"
-                            placeholder="How do you communicate complex ideas to different audiences..."
-                            required
-                          />
-                        </div>
-
-                        <div>
-                          <label className="block text-sm font-medium text-gray-700 mb-2">
-                            Leadership
-                          </label>
-                          <textarea
-                            value={formData.leadership}
-                            onChange={(e) => setFormData({...formData, leadership: e.target.value})}
-                            className="w-full border border-gray-300 rounded-lg p-3 focus:ring-2 focus:ring-purple-500 focus:border-transparent"
-                            rows="3"
-                            placeholder="Share examples of when you led a team or initiative..."
-                            required
-                          />
-                        </div>
-
-                        <div>
-                          <label className="block text-sm font-medium text-gray-700 mb-2">
-                            Innovation
-                          </label>
-                          <textarea
-                            value={formData.innovation}
-                            onChange={(e) => setFormData({...formData, innovation: e.target.value})}
-                            className="w-full border border-gray-300 rounded-lg p-3 focus:ring-2 focus:ring-purple-500 focus:border-transparent"
-                            rows="3"
-                            placeholder="Describe innovative solutions you've developed..."
-                            required
-                          />
-                        </div>
-
-                        <button
-                          type="submit"
-                          className="w-full bg-purple-600 text-white py-3 rounded-lg font-semibold hover:bg-purple-700 transition"
-                        >
-                          Calculate Scores
-                        </button>
-                      </form>
-                    ) : (
-                      <div className="flex flex-col items-center">
-                        {/* FIFA-style Card */}
-                        <div className="relative w-80 h-[500px] mb-8" style={{
-                          background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
-                          borderRadius: '20px',
-                          boxShadow: '0 20px 60px rgba(0,0,0,0.3)',
-                          padding: '20px',
-                          transform: 'perspective(1000px) rotateY(0deg)',
-                          transition: 'transform 0.3s ease'
-                        }}>
-                          {/* Card Header */}
-                          <div className="text-center mb-4">
-                            <div className="text-6xl font-black text-white mb-2" style={{
-                              textShadow: '2px 2px 4px rgba(0,0,0,0.5)'
-                            }}>
-                              {getAverageScore(scores)}
-                            </div>
-                            <div className="text-sm font-bold text-white/90 uppercase tracking-wider">
-                              Overall Rating
-                            </div>
-                          </div>
-
-                          {/* Player Avatar */}
-                          <div className="flex justify-center mb-4">
-                            <div className="w-32 h-32 bg-white/20 backdrop-blur-sm rounded-full flex items-center justify-center border-4 border-white/40">
-                              <User className="w-20 h-20 text-white" />
-                            </div>
-                          </div>
-
-                          {/* Player Name */}
-                          <div className="text-center mb-6">
-                            <div className="text-2xl font-bold text-white mb-1" style={{
-                              textShadow: '1px 1px 2px rgba(0,0,0,0.3)'
-                            }}>
-                              Alex Johnson
-                            </div>
-                            <div className="text-sm text-white/80 uppercase tracking-wide">
-                              Professional
-                            </div>
-                          </div>
-
-                          {/* Stats Grid */}
-                          <div className="grid grid-cols-2 gap-3">
-                            <div className="bg-white/10 backdrop-blur-sm rounded-lg p-3 border border-white/20">
-                              <div className="text-xs text-white/70 uppercase tracking-wide mb-1">TEC</div>
-                              <div className="text-3xl font-bold text-white">{scores.technical}</div>
-                              <div className="text-xs text-white/80 mt-1">Technical</div>
-                            </div>
-                            <div className="bg-white/10 backdrop-blur-sm rounded-lg p-3 border border-white/20">
-                              <div className="text-xs text-white/70 uppercase tracking-wide mb-1">COM</div>
-                              <div className="text-3xl font-bold text-white">{scores.communication}</div>
-                              <div className="text-xs text-white/80 mt-1">Communication</div>
-                            </div>
-                            <div className="bg-white/10 backdrop-blur-sm rounded-lg p-3 border border-white/20">
-                              <div className="text-xs text-white/70 uppercase tracking-wide mb-1">LEA</div>
-                              <div className="text-3xl font-bold text-white">{scores.leadership}</div>
-                              <div className="text-xs text-white/80 mt-1">Leadership</div>
-                            </div>
-                            <div className="bg-white/10 backdrop-blur-sm rounded-lg p-3 border border-white/20">
-                              <div className="text-xs text-white/70 uppercase tracking-wide mb-1">INN</div>
-                              <div className="text-3xl font-bold text-white">{scores.innovation}</div>
-                              <div className="text-xs text-white/80 mt-1">Innovation</div>
-                            </div>
-                          </div>
-
-                          {/* Card Footer Badge */}
-                          <div className="absolute bottom-4 left-1/2 transform -translate-x-1/2">
-                            <div className="bg-yellow-400 text-yellow-900 px-4 py-1 rounded-full text-xs font-bold uppercase tracking-wider shadow-lg">
-                              {getAverageScore(scores) >= 85 ? 'Elite' : getAverageScore(scores) >= 70 ? 'Pro' : 'Rising Star'}
-                            </div>
-                          </div>
-                        </div>
-
-                        {/* Action Buttons */}
-                        <div className="flex gap-4 w-full max-w-md">
-                          <button
-                            onClick={() => {
-                              setScores(null);
-                              setFormData({ technical: '', communication: '', leadership: '', innovation: '' });
-                            }}
-                            className="flex-1 bg-gray-200 text-gray-700 py-3 rounded-lg font-semibold hover:bg-gray-300 transition"
-                          >
-                            New Assessment
-                          </button>
-                          <button
-                            onClick={() => setCurrentPage('user')}
-                            className="flex-1 bg-purple-600 text-white py-3 rounded-lg font-semibold hover:bg-purple-700 transition"
-                          >
-                            Back to Profile
-                          </button>
-                        </div>
-                      </div>
-                    )}
+                <div className="mt-auto pt-6 border-t border-white/10">
+                  <div className="text-sm text-gray-300">
+                    <p className="font-semibold text-white mb-1">{userData.name}</p>
+                    <p>{userData.email}</p>
                   </div>
                 </div>
               </div>
-            );
-          }
+
+              {/* Main Content */}
+              <div className="flex-1 p-8 overflow-y-auto">
+                {currentPage === 'user' && (
+                  <div className="max-w-5xl mx-auto">
+                    <h1 className="text-4xl font-bold text-white mb-8">User Profile</h1>
+                    
+                    <div className="bg-white/5 backdrop-blur-md rounded-lg border border-brain-pink/20 p-8 mb-8">
+                      <div className="flex items-center gap-6 mb-6">
+                        <div className="w-24 h-24 rounded-full flex items-center justify-center" style={{ background: 'linear-gradient(135deg, #E91E8C, #4A9EBD)' }}>
+                          <User className="w-12 h-12 text-white" />
+                        </div>
+                        <div>
+                          <h2 className="text-3xl font-bold text-white">{userData.name}</h2>
+                          <p className="text-gray-300">{userData.email}</p>
+                          <p className="text-sm text-gray-400">Member since {userData.joinDate}</p>
+                        </div>
+                      </div>
+
+                      <div className="grid grid-cols-3 gap-4">
+                        <div className="bg-brain-pink/10 backdrop-blur-sm p-4 rounded-lg border border-brain-pink/20">
+                          <p className="text-sm text-gray-300 mb-1">Total Assessments</p>
+                          <p className="text-3xl font-bold text-brain-pink">{userData.totalAssessments}</p>
+                        </div>
+                        <div className="bg-brain-blue/10 backdrop-blur-sm p-4 rounded-lg border border-brain-blue/20">
+                          <p className="text-sm text-gray-300 mb-1">Latest Score</p>
+                          <p className="text-3xl font-bold text-brain-blue">{userData.pastAssessments[0].overall}</p>
+                        </div>
+                        <div className="bg-purple-500/10 backdrop-blur-sm p-4 rounded-lg border border-purple-500/20">
+                          <p className="text-sm text-gray-300 mb-1">Average Score</p>
+                          <p className="text-3xl font-bold text-purple-400">
+                            {Math.round(userData.pastAssessments.reduce((sum, a) => sum + a.overall, 0) / userData.pastAssessments.length)}
+                          </p>
+                        </div>
+                      </div>
+
+                      <button
+                        onClick={() => setCurrentPage('assessment')}
+                        className="w-full mt-6 py-4 rounded-lg font-semibold text-lg transition"
+                        style={{ background: 'linear-gradient(135deg, #E91E8C, #4A9EBD)', color: 'white' }}
+                      >
+                        Start New Assessment
+                      </button>
+                    </div>
+
+                    <div className="bg-white/5 backdrop-blur-md rounded-lg border border-brain-pink/20 p-8">
+                      <h2 className="text-2xl font-bold text-white mb-6">Past Assessments</h2>
+                      
+                      <div className="space-y-4">
+                        {userData.pastAssessments.map((assessment, idx) => (
+                          <div key={idx} className="bg-white/5 backdrop-blur-sm border border-white/10 rounded-lg p-6 hover:border-brain-pink/40 transition">
+                            <div className="flex justify-between items-center mb-4">
+                              <div>
+                                <p className="text-sm text-gray-400">{assessment.date}</p>
+                                <div className="flex items-center gap-3 mt-1">
+                                  <span className="text-4xl font-black text-brain-pink">{assessment.overall}</span>
+                                </div>
+                              </div>
+                            </div>
+                            
+                            <div className="grid grid-cols-3 gap-3">
+                              {Object.entries(assessment.scores).map(([category, score]) => (
+                                <div key={category} className="bg-white/5 backdrop-blur-sm p-3 rounded border border-white/10">
+                                  <p className="text-xs text-gray-400 mb-1">{category}</p>
+                                  <p className="text-2xl font-bold text-white">{score}</p>
+                                </div>
+                              ))}
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  </div>
+                )}
+
+                {currentPage === 'assessment' && (
+                  <div className="max-w-4xl mx-auto">
+                    <h1 className="text-4xl font-bold text-white mb-2">Self-Evaluation</h1>
+                    <p className="text-gray-300 mb-8">Rate each statement from 1 (Strongly Disagree) to 5 (Strongly Agree)</p>
+                    
+                    <form onSubmit={calculateResults} className="bg-white/5 backdrop-blur-md rounded-lg border border-brain-pink/20 p-8">
+                      <div className="space-y-8">
+                        {questions.map((question) => (
+                          <div key={question.id} className="border-b border-white/10 pb-6 last:border-0">
+                            <div className="flex items-center gap-3 mb-2">
+                              <span className={`${getCategoryColor(question.short)} text-white px-3 py-1 rounded text-xs font-bold`}>
+                                {question.short}
+                              </span>
+                              <p className="text-sm font-semibold text-gray-300">{question.category}</p>
+                            </div>
+                            <p className="text-white mb-4 font-medium">{question.id}. {question.text}</p>
+                            
+                            <div className="flex gap-3">
+                              {[1, 2, 3, 4, 5].map(value => (
+                                <label key={value} className="flex-1">
+                                  <input
+                                    type="radio"
+                                    name={`question-${question.id}`}
+                                    value={value}
+                                    checked={answers[question.id] === value}
+                                    onChange={(e) => handleAnswerChange(question.id, e.target.value)}
+                                    className="sr-only peer"
+                                    required
+                                  />
+                                  <div className="border-2 border-white/20 rounded-lg p-3 text-center cursor-pointer transition peer-checked:border-brain-pink peer-checked:bg-brain-pink/20 hover:border-brain-pink/60">
+                                    <div className="text-2xl font-bold text-white">{value}</div>
+                                    <div className="text-xs text-gray-400 mt-1">
+                                      {value === 1 ? 'Strongly Disagree' : value === 3 ? 'Neutral' : value === 5 ? 'Strongly Agree' : ''}
+                                    </div>
+                                  </div>
+                                </label>
+                              ))}
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+
+                      <div className="mt-8 flex gap-4">
+                        <button
+                          type="button"
+                          onClick={resetAssessment}
+                          className="flex-1 bg-white/10 text-white py-4 rounded-lg font-semibold hover:bg-white/20 transition border border-white/20"
+                        >
+                          Reset
+                        </button>
+                        <button
+                          type="submit"
+                          disabled={!isFormComplete()}
+                          className="flex-1 py-4 rounded-lg font-semibold transition disabled:opacity-50 disabled:cursor-not-allowed"
+                          style={{ background: isFormComplete() ? 'linear-gradient(135deg, #E91E8C, #4A9EBD)' : '#666', color: 'white' }}
+                        >
+                          Calculate Results
+                        </button>
+                      </div>
+                    </form>
+                  </div>
+                )}
+
+                {currentPage === 'results' && results && (
+                  <div className="max-w-5xl mx-auto">
+                    <h1 className="text-4xl font-bold text-white mb-8">Assessment Results</h1>
+                    
+                    <div className="grid grid-cols-3 gap-8 mb-8">
+                      {/* FIFA Card */}
+                      <div className="col-span-1">
+                        <div className="relative w-full" style={{
+                          background: 'linear-gradient(135deg, #1a2639 0%, #2d4059 100%)',
+                          borderRadius: '20px',
+                          border: '3px solid #C5A572',
+                          padding: '24px',
+                          boxShadow: '0 20px 60px rgba(0,0,0,0.5)'
+                        }}>
+                          {/* Header */}
+                          <div className="text-center mb-4">
+                            <div className="text-xs text-gray-400 mb-2 uppercase tracking-wider">Mental Ratio</div>
+                            <div className="text-7xl font-black mb-1" style={{ color: '#E91E8C', textShadow: '3px 3px 6px rgba(0,0,0,0.5)' }}>
+                              {getOverallScore(results)}
+                            </div>
+                            <div className="text-sm font-bold text-gray-300 uppercase">Overall</div>
+                          </div>
+
+                          {/* Avatar */}
+                          <div className="flex justify-center mb-4">
+                            <div className="w-28 h-28 rounded-full flex items-center justify-center" style={{
+                              background: 'linear-gradient(135deg, #E91E8C 0%, #4A9EBD 100%)',
+                              border: '3px solid rgba(255,255,255,0.2)'
+                            }}>
+                              <User className="w-16 h-16 text-white" />
+                            </div>
+                          </div>
+
+                          {/* Name */}
+                          <div className="text-center mb-6">
+                            <div className="text-2xl font-bold text-white mb-1">{userData.name}</div>
+                            <div className="text-xs text-gray-400 uppercase tracking-wide">Self-Evaluation</div>
+                          </div>
+
+                          {/* Stats */}
+                          <div className="grid grid-cols-2 gap-2">
+                            {Object.entries(results).map(([category, score]) => (
+                              <div key={category} className="bg-white/5 backdrop-blur-sm rounded-lg p-3 border border-white/10">
+                                <div className="text-xs text-gray-400 uppercase tracking-wide mb-1">{category}</div>
+                                <div className="text-3xl font-bold text-white">{score}</div>
+                              </div>
+                            ))}
+                          </div>
+
+                          {/* Footer */}
+                          <div className="mt-6 text-center">
+                            <div className="inline-block px-4 py-1 rounded-full text-xs font-bold uppercase" style={{
+                              background: '#C5A572',
+                              color: '#1a2639'
+                            }}>
+                              1st Edition
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+
+                      {/* Table */}
+                      <div className="col-span-2">
+                        <div className="bg-white/5 backdrop-blur-md rounded-lg border border-brain-pink/20 overflow-hidden">
+                          <div className="p-6" style={{ background: 'linear-gradient(135deg, #E91E8C 0%, #4A9EBD 100%)' }}>
+                            <h2 className="text-2xl font-bold text-white">Detailed Breakdown</h2>
+                          </div>
+
+                          <div className="p-6">
+                            <table className="w-full">
+                              <thead>
+                                <tr className="border-b-2 border-white/20">
+                                  <th className="text-left py-4 px-4 font-bold text-gray-300">Category</th>
+                                  <th className="text-center py-4 px-4 font-bold text-gray-300">Score</th>
+                                  <th className="text-left py-4 px-4 font-bold text-gray-300">Performance</th>
+                                </tr>
+                              </thead>
+                              <tbody>
+                                {Object.entries(results).map(([category, score], idx) => (
+                                  <tr key={idx} className="border-b border-white/10 hover:bg-white/5 transition">
+                                    <td className="py-4 px-4">
+                                      <div className="flex items-center gap-3">
+                                        <span className={`${getCategoryColor(category)} text-white px-2 py-1 rounded text-xs font-bold`}>
+                                          {category}
+                                        </span>
+                                        <span className="font-medium text-white">{getCategoryName(category)}</span>
+                                      </div>
+                                    </td>
+                                    <td className="py-4 px-4 text-center">
+                                      <span className="text-3xl font-black text-brain-pink">{score}</span>
+                                    </td>
+                                    <td className="py-4 px-4">
+                                      <div className="flex items-center gap-3">
+                                        <div className="flex-1 bg-white/10 rounded-full h-3">
+                                          <div
+                                            className="h-3 rounded-full transition-all"
+                                            style={{ 
+                                              width: `${score}%`,
+                                              background: 'linear-gradient(90deg, #E91E8C 0%, #4A9EBD 100%)'
+                                            }}
+                                          />
+                                        </div>
+                                      </div>
+                                    </td>
+                                  </tr>
+                                ))}
+                              </tbody>
+                            </table>
+                          </div>
+
+                          <div className="bg-white/5 p-6 border-t border-white/10">
+                            <div className="flex gap-4">
+                              <button
+                                onClick={resetAssessment}
+                                className="flex-1 py-4 rounded-lg font-semibold transition"
+                                style={{ background: 'linear-gradient(135deg, #E91E8C, #4A9EBD)', color: 'white' }}
+                              >
+                                Take Another Assessment
+                              </button>
+                              <button
+                                onClick={() => setCurrentPage('user')}
+                                className="flex-1 bg-white/10 text-white py-4 rounded-lg font-semibold hover:bg-white/20 transition border border-white/20"
+                              >
+                                Back to User
+                              </button>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                )}
+
+                {currentPage === 'external' && (
+                  <div className="max-w-4xl mx-auto">
+                    <div className="bg-yellow-500/10 border-2 border-yellow-500/30 rounded-lg p-6 mb-6 backdrop-blur-md">
+                      <div className="flex items-center gap-3 mb-2">
+                        <Crown className="w-8 h-8 text-yellow-400" />
+                        <h1 className="text-3xl font-bold text-white">External Evaluation</h1>
+                        <span className="bg-yellow-500 text-gray-900 px-3 py-1 rounded-full text-xs font-bold uppercase">Pro Feature</span>
+                      </div>
+                      <p className="text-gray-300 text-lg">This premium feature is currently locked</p>
+                    </div>
+
+                    <div className="bg-white/5 backdrop-blur-md rounded-lg border border-brain-pink/20 p-12 text-center">
+                      <Users className="w-20 h-20 text-gray-400 mx-auto mb-6" />
+                      <h2 className="text-2xl font-bold text-white mb-4">Request External Evaluation</h2>
+                      <p className="text-gray-300 text-lg mb-8 max-w-2xl mx-auto">
+                        This is where the user will ask for an external evaluation of their performance. 
+                        Coaches, teammates, or professionals can provide feedback on your mental attributes, 
+                        offering valuable outside perspectives to complement your self-assessment.
+                      </p>
+                      
+                      <div className="bg-brain-pink/10 border border-brain-pink/30 rounded-lg p-6 mb-8 max-w-2xl mx-auto backdrop-blur-sm">
+                        <h3 className="font-bold text-brain-pink mb-3">Pro Features Include:</h3>
+                        <ul className="text-left text-gray-300 space-y-2">
+                          <li className="flex items-start gap-2">
+                            <span className="text-brain-pink font-bold">•</span>
+                            <span>Send evaluation requests to multiple evaluators</span>
+                          </li>
+                          <li className="flex items-start gap-2">
+                            <span className="text-brain-pink font-bold">•</span>
+                            <span>Anonymous feedback option for honest responses</span>
+                          </li>
+                          <li className="flex items-start gap-2">
+                            <span className="text-brain-pink font-bold">•</span>
+                            <span>Compare external evaluations with self-assessment</span>
+                          </li>
+                          <li className="flex items-start gap-2">
+                            <span className="text-brain-pink font-bold">•</span>
+                            <span>Track evaluation trends over time</span>
+                          </li>
+                          <li className="flex items-start gap-2">
+                            <span className="text-brain-pink font-bold">•</span>
+                            <span>Generate comprehensive Mental Ratio reports</span>
+                          </li>
+                        </ul>
+                      </div>
+
+                      <button className="px-8 py-4 rounded-lg font-bold text-lg transition shadow-lg"
+                        style={{ background: 'linear-gradient(135deg, #E91E8C, #4A9EBD)', color: 'white' }}
+                      >
+                        Upgrade to Pro
+                      </button>
+                    </div>
+                  </div>
+                )}
+              </div>
+            </div>
+          );
         }
 
-        ReactDOM.render(<DemoApp />, document.getElementById('root'));
+        ReactDOM.render(<MentalRatioApp />, document.getElementById('root'));
     </script>
 </body>
 </html>
