@@ -1,603 +1,927 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Mental Ratio Assessment</title>
-    <script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
-    <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
-    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <script>
-        tailwind.config = {
-            theme: {
-                extend: {
-                    colors: {
-                        'brain-pink': '#E91E8C',
-                        'brain-blue': '#4A9EBD',
-                        'brain-navy': '#2C3E50',
-                        'brain-purple': '#4A3B5C',
-                    }
-                }
-            }
-        }
-    </script>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>Mental Ratio</title>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:wght@400;600;700;900&family=Karla:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg:#f5f0eb; --surface:#faf7f4; --surface2:#eee8e0;
+    --border:rgba(80,60,40,0.10); --text:#2a2118; --muted:#8a7d6e; --muted2:#b5a899;
+    --focus:#7e6fa0; --resilience:#3d8b7a; --gameiq:#6b9e78;
+    --leadership:#b09070; --assertive:#c47a7a; --discipline:#b5623e;
+    --accent:#b5623e; --teal:#3d8b7a; --rose:#c47a7a; --sand:#b09070;
+    --radius:14px; --sidebar:64px;
+  }
+  *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
+  body{font-family:'Karla',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;display:flex;overflow:hidden;}
+
+  /* SIDEBAR */
+  .sidebar{width:var(--sidebar);background:var(--surface);border-right:1px solid var(--border);display:flex;flex-direction:column;align-items:center;padding:18px 0 22px;position:fixed;top:0;left:0;bottom:0;z-index:100;gap:6px;}
+  .logo-mark{font-family:'Fraunces',serif;font-weight:900;font-size:17px;color:var(--accent);margin-bottom:20px;}
+  .nav-btn{width:42px;height:42px;border-radius:11px;display:flex;align-items:center;justify-content:center;cursor:pointer;color:var(--muted);border:none;background:none;transition:all 0.18s;position:relative;}
+  .nav-btn svg{width:19px;height:19px;stroke-width:1.8;}
+  .nav-btn:hover{background:var(--surface2);color:var(--text);}
+  .nav-btn.active{background:var(--accent);color:#fff;}
+  .nav-tip{position:absolute;left:52px;background:var(--text);color:var(--surface);font-size:11px;font-family:'Karla',sans-serif;padding:5px 9px;border-radius:7px;white-space:nowrap;opacity:0;pointer-events:none;transition:opacity 0.15s;z-index:200;}
+  .nav-btn:hover .nav-tip{opacity:1;}
+  .sidebar-foot{margin-top:auto;display:flex;flex-direction:column;align-items:center;gap:8px;}
+  .avatar{width:34px;height:34px;border-radius:50%;background:linear-gradient(135deg,var(--rose),var(--sand));display:flex;align-items:center;justify-content:center;font-family:'Fraunces',serif;font-weight:700;font-size:12px;color:#fff;cursor:pointer;}
+
+  /* MAIN */
+  .main{margin-left:var(--sidebar);flex:1;overflow-y:auto;height:100vh;}
+  .main::-webkit-scrollbar{width:3px;}
+  .main::-webkit-scrollbar-thumb{background:var(--surface2);border-radius:2px;}
+
+  /* PAGES */
+  .page{display:none;padding:26px 22px 80px;max-width:500px;}
+  .page.active{display:block;animation:fadeUp 0.28s ease;}
+  @keyframes fadeUp{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
+
+  /* TYPE */
+  .page-title{font-family:'Fraunces',serif;font-weight:700;font-size:22px;line-height:1.2;}
+  .page-sub{font-size:13px;color:var(--muted);margin-top:3px;}
+  .section-label{font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:1.6px;color:var(--muted2);margin:20px 0 10px;}
+
+  /* TOPBAR */
+  .topbar{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:22px;}
+  .notif-btn{width:36px;height:36px;border-radius:10px;background:var(--surface);border:1px solid var(--border);display:flex;align-items:center;justify-content:center;cursor:pointer;color:var(--muted);flex-shrink:0;margin-top:2px;position:relative;}
+  .notif-dot{width:6px;height:6px;background:var(--rose);border-radius:50%;position:absolute;top:8px;right:8px;}
+
+  /* CARD */
+  .card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:18px;margin-bottom:12px;}
+
+  /* RATIO HERO */
+  .ratio-hero{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:22px;margin-bottom:12px;display:flex;align-items:center;gap:18px;}
+  .ratio-ring{position:relative;width:84px;height:84px;flex-shrink:0;}
+  .ratio-ring svg{transform:rotate(-90deg);}
+  .ratio-ring-label{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;}
+  .ratio-number{font-family:'Fraunces',serif;font-weight:900;font-size:24px;color:var(--accent);line-height:1;}
+  .ratio-denom{font-size:10px;color:var(--muted2);}
+  .ratio-info h3{font-family:'Fraunces',serif;font-weight:700;font-size:16px;margin-bottom:5px;}
+  .ratio-info p{font-size:12px;color:var(--muted);line-height:1.5;}
+  .ratio-badge{display:inline-flex;align-items:center;gap:4px;margin-top:8px;padding:3px 10px;background:rgba(181,98,62,0.1);border:1px solid rgba(181,98,62,0.2);border-radius:20px;font-size:11px;color:var(--accent);font-weight:600;}
+
+  /* UNLOCK */
+  .unlock-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:18px;margin-bottom:12px;}
+  .unlock-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:6px;}
+  .unlock-title{font-family:'Fraunces',serif;font-weight:700;font-size:14px;}
+  .unlock-level{font-size:11px;font-weight:600;padding:3px 9px;border-radius:20px;border:1px solid var(--border);background:var(--surface2);color:var(--muted);}
+  .unlock-level.active{background:rgba(181,98,62,0.1);border-color:rgba(181,98,62,0.25);color:var(--accent);}
+  .unlock-desc{font-size:12px;color:var(--muted);line-height:1.55;margin-bottom:12px;}
+  .unlock-track{display:flex;gap:4px;margin-bottom:8px;}
+  .unlock-pip{flex:1;height:5px;border-radius:3px;background:var(--surface2);transition:background 0.3s;}
+  .unlock-pip.filled{background:var(--accent);}
+  .unlock-track-label{font-size:10px;color:var(--muted2);font-weight:600;}
+  .unlock-tiers{display:flex;gap:8px;margin-top:12px;}
+  .tier-badge{flex:1;padding:10px 8px;border-radius:10px;border:1.5px solid var(--border);background:var(--bg);text-align:center;}
+  .tier-badge.unlocked{border-color:rgba(181,98,62,0.3);background:rgba(181,98,62,0.05);}
+  .tier-badge.current{border-color:var(--accent);background:rgba(181,98,62,0.08);}
+  .tier-icon{font-size:16px;display:block;margin-bottom:4px;}
+  .tier-name{font-size:10px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:0.8px;}
+  .tier-badge.unlocked .tier-name,.tier-badge.current .tier-name{color:var(--accent);}
+
+  /* ATTRS */
+  .attr-grid{display:grid;grid-template-columns:1fr 1fr;gap:9px;margin-bottom:12px;}
+  .attr-card{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:14px;cursor:pointer;transition:border-color 0.18s;}
+  .attr-card:hover{border-color:rgba(80,60,40,0.2);}
+  .attr-icon{font-size:16px;margin-bottom:8px;display:block;}
+  .attr-name{font-size:11px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:0.8px;margin-bottom:4px;}
+  .attr-score{font-family:'Fraunces',serif;font-weight:700;font-size:20px;line-height:1;}
+  .attr-bar-bg{height:3px;background:var(--surface2);border-radius:2px;margin-top:8px;overflow:hidden;}
+  .attr-bar{height:100%;border-radius:2px;}
+  .attr-locked{display:flex;align-items:center;gap:6px;margin-top:6px;}
+  .attr-locked-label{font-size:11px;color:var(--muted2);}
+
+  /* INSIGHT */
+  .insight-panel{display:none;background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:20px;margin-bottom:12px;animation:fadeUp 0.22s ease;}
+  .insight-panel.open{display:block;}
+  .insight-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:14px;}
+  .insight-title{font-family:'Fraunces',serif;font-weight:700;font-size:15px;}
+  .insight-close{font-size:13px;color:var(--muted);cursor:pointer;padding:4px 8px;border-radius:6px;background:var(--surface2);border:none;font-family:'Karla',sans-serif;}
+  .insight-section{margin-bottom:14px;}
+  .insight-section-title{font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:1px;color:var(--muted2);margin-bottom:6px;display:flex;align-items:center;gap:5px;}
+  .insight-text{font-size:13px;color:var(--text);line-height:1.6;}
+  .insight-locked{display:flex;flex-direction:column;align-items:center;justify-content:center;padding:20px;text-align:center;gap:8px;}
+  .insight-locked-icon{font-size:26px;}
+  .insight-locked-text{font-size:13px;color:var(--muted);line-height:1.5;}
+  .insight-locked-label{font-size:11px;font-weight:600;color:var(--accent);}
+
+  /* ACTIVITY */
+  .act-item{display:flex;align-items:center;gap:12px;padding:11px 0;border-bottom:1px solid var(--border);}
+  .act-item:last-child{border-bottom:none;padding-bottom:0;}
+  .act-dot{width:7px;height:7px;border-radius:50%;flex-shrink:0;}
+  .act-text{font-size:13px;flex:1;}
+  .act-text span{color:var(--muted);}
+  .act-time{font-size:11px;color:var(--muted2);}
+
+  /* ASSESSMENT */
+  .assess-progress{display:flex;gap:4px;margin-bottom:20px;}
+  .progress-pip{flex:1;height:3px;border-radius:2px;background:var(--surface2);transition:background 0.3s;}
+  .progress-pip.done{background:var(--accent);}
+  .q-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:22px;margin-bottom:12px;}
+  .q-attr-label{font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:1.4px;margin-bottom:10px;}
+  .q-text{font-family:'Fraunces',serif;font-weight:600;font-size:16px;line-height:1.45;margin-bottom:20px;}
+  .answer-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;}
+  .answer-btn{padding:12px 10px;border-radius:10px;border:1.5px solid var(--border);background:var(--bg);cursor:pointer;text-align:left;transition:all 0.18s;font-family:'Karla',sans-serif;}
+  .answer-btn .ans-num{font-family:'Fraunces',serif;font-weight:700;font-size:18px;display:block;margin-bottom:3px;}
+  .answer-btn .ans-label{font-size:11px;color:var(--muted);display:block;}
+  .answer-btn:hover{border-color:var(--accent);background:rgba(181,98,62,0.05);}
+  .answer-btn.selected{border-color:var(--accent);background:rgba(181,98,62,0.08);}
+  .answer-btn.selected .ans-num{color:var(--accent);}
+  .q-nav{display:flex;gap:10px;margin-top:14px;}
+  .btn-secondary{flex:1;padding:13px;border-radius:11px;border:1.5px solid var(--border);background:none;font-family:'Karla',sans-serif;font-weight:600;font-size:14px;color:var(--muted);cursor:pointer;transition:all 0.18s;}
+  .btn-secondary:hover{background:var(--surface2);color:var(--text);}
+  .btn-primary{flex:2;padding:13px;border-radius:11px;border:none;background:var(--accent);font-family:'Karla',sans-serif;font-weight:600;font-size:14px;color:#fff;cursor:pointer;transition:all 0.18s;}
+  .btn-primary:hover{opacity:0.9;transform:translateY(-1px);}
+  .btn-primary:disabled{opacity:0.4;cursor:default;transform:none;}
+  .score-preview{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:20px;margin-bottom:12px;display:none;flex-direction:column;gap:14px;}
+  .score-preview-top{display:flex;align-items:center;gap:16px;}
+  .score-num{font-family:'Fraunces',serif;font-weight:900;font-size:40px;color:var(--accent);flex-shrink:0;}
+  .score-info-text{font-size:12px;color:var(--muted);line-height:1.6;}
+  .score-breakdown{display:flex;flex-direction:column;gap:8px;}
+  .score-row{display:flex;align-items:center;gap:10px;}
+  .score-row-label{font-size:12px;color:var(--muted);width:90px;flex-shrink:0;}
+  .score-row-bar-bg{flex:1;height:4px;background:var(--surface2);border-radius:2px;overflow:hidden;}
+  .score-row-bar{height:100%;border-radius:2px;}
+  .score-row-val{font-family:'Fraunces',serif;font-weight:700;font-size:13px;width:20px;text-align:right;flex-shrink:0;}
+
+  /* TASKS */
+  .filter-row{display:flex;gap:7px;margin-bottom:14px;overflow-x:auto;padding-bottom:2px;}
+  .filter-row::-webkit-scrollbar{display:none;}
+  .chip{padding:5px 13px;border-radius:20px;border:1.5px solid var(--border);background:var(--surface);font-size:12px;font-weight:600;color:var(--muted);cursor:pointer;white-space:nowrap;transition:all 0.18s;}
+  .chip.active{background:var(--accent);border-color:var(--accent);color:#fff;}
+  .task-item{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:14px 16px;margin-bottom:8px;display:flex;align-items:flex-start;gap:12px;transition:border-color 0.18s;}
+  .task-item.personalised{border-color:rgba(61,139,122,0.3);background:rgba(61,139,122,0.03);}
+  .task-item:hover{border-color:rgba(80,60,40,0.2);}
+  .task-check{width:20px;height:20px;border-radius:50%;border:2px solid var(--border);flex-shrink:0;margin-top:2px;display:flex;align-items:center;justify-content:center;cursor:pointer;transition:all 0.18s;}
+  .task-check.done{background:var(--teal);border-color:var(--teal);}
+  .task-check.done::after{content:'';width:5px;height:5px;background:#fff;border-radius:50%;}
+  .task-body{flex:1;min-width:0;}
+  .task-title{font-size:13px;font-weight:500;margin-bottom:5px;line-height:1.4;}
+  .task-title.done{text-decoration:line-through;color:var(--muted2);}
+  .task-meta{display:flex;align-items:center;gap:7px;flex-wrap:wrap;}
+  .t-tag{font-size:10px;font-weight:600;padding:2px 8px;border-radius:20px;text-transform:uppercase;letter-spacing:0.5px;}
+  .tag-focus{background:rgba(126,111,160,0.12);color:var(--focus);}
+  .tag-resilience{background:rgba(61,139,122,0.12);color:var(--teal);}
+  .tag-leadership{background:rgba(176,144,112,0.12);color:var(--sand);}
+  .tag-discipline{background:rgba(181,98,62,0.12);color:var(--discipline);}
+  .tag-assertive{background:rgba(196,122,122,0.12);color:var(--rose);}
+  .tag-gameiq{background:rgba(107,158,120,0.12);color:var(--gameiq);}
+  .tag-personalised{background:rgba(61,139,122,0.12);color:var(--teal);font-size:9px;letter-spacing:0.5px;}
+  .task-type{font-size:11px;color:var(--muted2);}
+  .task-pts{font-size:11px;color:var(--accent);font-weight:600;margin-left:auto;}
+  .pts-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:16px 18px;margin-bottom:12px;display:flex;align-items:center;gap:14px;}
+  .pts-icon{width:38px;height:38px;border-radius:10px;background:rgba(181,98,62,0.1);display:flex;align-items:center;justify-content:center;font-size:17px;flex-shrink:0;}
+  .pts-info{flex:1;}
+  .pts-label{font-size:10px;color:var(--muted2);text-transform:uppercase;letter-spacing:1px;margin-bottom:3px;}
+  .pts-val{font-family:'Fraunces',serif;font-weight:700;font-size:20px;color:var(--accent);}
+  .pts-bar-bg{height:4px;background:var(--surface2);border-radius:2px;margin-top:7px;overflow:hidden;}
+  .pts-bar{height:100%;border-radius:2px;background:linear-gradient(90deg,var(--discipline),var(--rose));width:62%;}
+
+  /* ── OUTSIDER EVAL ── */
+  .premium-hero{
+    background:linear-gradient(135deg,rgba(176,144,112,0.12),rgba(126,111,160,0.10));
+    border:1px solid rgba(176,144,112,0.25);
+    border-radius:var(--radius);padding:22px;margin-bottom:16px;
+  }
+  .premium-hero-top{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:10px;}
+  .premium-hero-title{font-family:'Fraunces',serif;font-weight:700;font-size:18px;}
+  .premium-badge{background:var(--sand);color:#fff;font-size:10px;font-weight:700;padding:3px 9px;border-radius:20px;letter-spacing:0.8px;text-transform:uppercase;}
+  .premium-hero p{font-size:13px;color:var(--muted);line-height:1.6;margin-bottom:16px;}
+  .price-row{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;}
+  .price-val{font-family:'Fraunces',serif;font-weight:900;font-size:28px;color:var(--text);}
+  .price-note{font-size:12px;color:var(--muted);text-align:right;line-height:1.4;}
+  .btn-purchase{width:100%;padding:14px;border-radius:12px;border:none;background:var(--accent);font-family:'Karla',sans-serif;font-weight:700;font-size:15px;color:#fff;cursor:pointer;transition:all 0.2s;}
+  .btn-purchase:hover{opacity:0.9;transform:translateY(-1px);}
+
+  /* tracker */
+  .tracker{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:20px;margin-bottom:12px;}
+  .tracker-title{font-family:'Fraunces',serif;font-weight:700;font-size:14px;margin-bottom:16px;}
+
+  .tracker-steps{display:flex;flex-direction:column;gap:0;}
+  .tracker-step{display:flex;gap:14px;align-items:flex-start;position:relative;}
+  .tracker-step:not(:last-child)::after{content:'';position:absolute;left:13px;top:28px;width:2px;bottom:-16px;background:var(--surface2);}
+  .tracker-step.done::after{background:var(--teal);}
+
+  .step-dot{width:28px;height:28px;border-radius:50%;border:2px solid var(--border);background:var(--bg);display:flex;align-items:center;justify-content:center;font-size:12px;flex-shrink:0;z-index:1;}
+  .step-dot.done{background:var(--teal);border-color:var(--teal);color:#fff;}
+  .step-dot.active{background:var(--accent);border-color:var(--accent);color:#fff;}
+  .step-dot.pending{background:var(--bg);border-color:var(--border);color:var(--muted2);}
+
+  .step-body{padding-bottom:20px;flex:1;}
+  .step-label{font-size:13px;font-weight:600;margin-bottom:2px;}
+  .step-label.done{color:var(--teal);}
+  .step-label.active{color:var(--accent);}
+  .step-label.pending{color:var(--muted2);}
+  .step-desc{font-size:12px;color:var(--muted);line-height:1.5;}
+  .step-date{font-size:11px;color:var(--muted2);margin-top:3px;}
+
+  .past-evals{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:18px;margin-bottom:12px;}
+  .past-eval-item{display:flex;align-items:center;gap:12px;padding:11px 0;border-bottom:1px solid var(--border);cursor:pointer;}
+  .past-eval-item:last-child{border-bottom:none;padding-bottom:0;}
+  .eval-score-badge{width:38px;height:38px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-family:'Fraunces',serif;font-weight:700;font-size:14px;flex-shrink:0;}
+  .past-eval-info{flex:1;}
+  .past-eval-label{font-size:13px;font-weight:500;margin-bottom:2px;}
+  .past-eval-meta{font-size:11px;color:var(--muted2);}
+  .eval-status{font-size:10px;font-weight:700;padding:3px 9px;border-radius:20px;text-transform:uppercase;letter-spacing:0.5px;}
+  .status-completed{background:rgba(61,139,122,0.12);color:var(--teal);}
+  .status-review{background:rgba(181,98,62,0.12);color:var(--accent);}
+
+  /* ── HISTORY ── */
+  .tab-row{display:flex;gap:0;margin-bottom:20px;background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:3px;}
+  .tab-btn{flex:1;padding:8px;border-radius:8px;border:none;background:none;font-family:'Karla',sans-serif;font-weight:600;font-size:12px;color:var(--muted);cursor:pointer;transition:all 0.18s;}
+  .tab-btn.active{background:var(--accent);color:#fff;}
+
+  .hist-section{display:none;}
+  .hist-section.active{display:block;}
+
+  /* SVG Chart */
+  .chart-wrap{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:18px;margin-bottom:12px;overflow:hidden;}
+  .chart-title{font-family:'Fraunces',serif;font-weight:700;font-size:14px;margin-bottom:4px;}
+  .chart-sub{font-size:12px;color:var(--muted);margin-bottom:16px;}
+  svg.chart{width:100%;overflow:visible;}
+
+  .chart-legend{display:flex;flex-wrap:wrap;gap:10px;margin-top:14px;}
+  .legend-item{display:flex;align-items:center;gap:5px;font-size:11px;color:var(--muted);}
+  .legend-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0;}
+
+  /* timeline axis labels */
+  .axis-label{font-size:9px;fill:var(--muted2);font-family:'Karla',sans-serif;}
+
+  /* History list */
+  .hist-item{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:16px;margin-bottom:10px;}
+  .hist-item-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;}
+  .hist-item-date{font-size:12px;color:var(--muted);}
+  .hist-item-score{font-family:'Fraunces',serif;font-weight:700;font-size:22px;color:var(--accent);}
+  .hist-mini-bars{display:flex;flex-direction:column;gap:5px;}
+  .hist-mini-row{display:flex;align-items:center;gap:8px;}
+  .hist-mini-label{font-size:10px;color:var(--muted);width:76px;flex-shrink:0;}
+  .hist-mini-bg{flex:1;height:3px;background:var(--surface2);border-radius:2px;overflow:hidden;}
+  .hist-mini-bar{height:100%;border-radius:2px;}
+  .hist-mini-val{font-size:10px;font-weight:600;width:22px;text-align:right;flex-shrink:0;}
+
+  /* Points history */
+  .pts-hist-item{display:flex;align-items:center;gap:12px;padding:10px 0;border-bottom:1px solid var(--border);}
+  .pts-hist-item:last-child{border-bottom:none;}
+  .pts-hist-icon{width:32px;height:32px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:14px;flex-shrink:0;}
+  .pts-hist-info{flex:1;}
+  .pts-hist-label{font-size:13px;font-weight:500;}
+  .pts-hist-date{font-size:11px;color:var(--muted2);}
+  .pts-hist-val{font-family:'Fraunces',serif;font-weight:700;font-size:15px;color:var(--accent);}
+
+  /* TOAST */
+  .toast{position:fixed;bottom:22px;left:50%;transform:translateX(-50%) translateY(80px);background:var(--text);border-radius:10px;padding:11px 18px;font-size:13px;font-weight:500;color:var(--surface);z-index:999;transition:transform 0.3s ease;white-space:nowrap;}
+  .toast.show{transform:translateX(-50%) translateY(0);}
+
+  /* MODAL */
+  .modal-overlay{position:fixed;inset:0;background:rgba(42,33,24,0.5);z-index:500;display:none;align-items:flex-end;justify-content:center;}
+  .modal-overlay.open{display:flex;animation:fadeUp 0.25s ease;}
+  .modal{background:var(--surface);border-radius:20px 20px 0 0;padding:28px 22px 40px;width:100%;max-width:500px;}
+  .modal-title{font-family:'Fraunces',serif;font-weight:700;font-size:18px;margin-bottom:6px;}
+  .modal-desc{font-size:13px;color:var(--muted);line-height:1.6;margin-bottom:20px;}
+  .modal-price-row{display:flex;align-items:baseline;gap:6px;margin-bottom:20px;}
+  .modal-price{font-family:'Fraunces',serif;font-weight:900;font-size:36px;color:var(--text);}
+  .modal-price-note{font-size:13px;color:var(--muted);}
+  .modal-btn{width:100%;padding:15px;border-radius:12px;border:none;background:var(--accent);font-family:'Karla',sans-serif;font-weight:700;font-size:15px;color:#fff;cursor:pointer;margin-bottom:10px;transition:all 0.2s;}
+  .modal-btn:hover{opacity:0.9;}
+  .modal-cancel{width:100%;padding:12px;border-radius:12px;border:1.5px solid var(--border);background:none;font-family:'Karla',sans-serif;font-weight:600;font-size:14px;color:var(--muted);cursor:pointer;}
+</style>
 </head>
 <body>
-    <div id="root"></div>
-    
-    <script type="text/babel">
-        const { useState } = React;
-        
-        // Icons
-        const User = ({ className }) => (
-            <svg className={className} fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
-            </svg>
-        );
-        
-        const ClipboardList = ({ className }) => (
-            <svg className={className} fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01" />
-            </svg>
-        );
-        
-        const BarChart3 = ({ className }) => (
-            <svg className={className} fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
-            </svg>
-        );
 
-        const UserCircle = ({ className }) => (
-            <svg className={className} fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5.121 17.804A13.937 13.937 0 0112 16c2.5 0 4.847.655 6.879 1.804M15 10a3 3 0 11-6 0 3 3 0 016 0zm6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
-            </svg>
-        );
+<!-- SIDEBAR -->
+<nav class="sidebar">
+  <div class="logo-mark">MR</div>
+  <button class="nav-btn active" onclick="showPage('dashboard')" id="nav-dashboard">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/></svg>
+    <span class="nav-tip">Dashboard</span>
+  </button>
+  <button class="nav-btn" onclick="showPage('assessment')" id="nav-assessment">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 01-2 2H5a2 2 0 01-2-2V5a2 2 0 012-2h11"/></svg>
+    <span class="nav-tip">Self-Assessment</span>
+  </button>
+  <button class="nav-btn" onclick="showPage('tasks')" id="nav-tasks">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+    <span class="nav-tip">Tasks</span>
+  </button>
+  <button class="nav-btn" onclick="showPage('history')" id="nav-history">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+    <span class="nav-tip">History</span>
+  </button>
+  <button class="nav-btn" onclick="showPage('evaluation')" id="nav-evaluation">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87"/><path d="M16 3.13a4 4 0 010 7.75"/></svg>
+    <span class="nav-tip">Evaluation</span>
+  </button>
+  <div class="sidebar-foot">
+    <div class="avatar">JS</div>
+  </div>
+</nav>
 
-        const Users = ({ className }) => (
-            <svg className={className} fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z" />
-            </svg>
-        );
+<main class="main">
 
-        const Crown = ({ className }) => (
-            <svg className={className} fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 3v4M3 5h4M6 17v4m-2-2h4m5-16l2.286 6.857L21 12l-5.714 2.143L13 21l-2.286-6.857L5 12l5.714-2.143L13 3z" />
-            </svg>
-        );
+  <!-- ════ DASHBOARD ════ -->
+  <div class="page active" id="page-dashboard">
+    <div class="topbar">
+      <div><div class="page-title">Morning, João</div><div class="page-sub">Monday, 17 Feb 2026</div></div>
+      <div class="notif-btn"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M18 8A6 6 0 006 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 01-3.46 0"/></svg><div class="notif-dot"></div></div>
+    </div>
+    <div class="ratio-hero">
+      <div class="ratio-ring">
+        <svg width="84" height="84" viewBox="0 0 84 84">
+          <circle cx="42" cy="42" r="34" fill="none" stroke="#eee8e0" stroke-width="6"/>
+          <circle cx="42" cy="42" r="34" fill="none" stroke="#b5623e" stroke-width="6" stroke-dasharray="213.6" stroke-dashoffset="64" stroke-linecap="round"/>
+        </svg>
+        <div class="ratio-ring-label"><div class="ratio-number">72</div><div class="ratio-denom">/100</div></div>
+      </div>
+      <div class="ratio-info">
+        <h3>Mental Ratio Score</h3>
+        <p>Weighted average of your 6 mental performance attributes</p>
+        <div class="ratio-badge">↑ +4 from last assessment</div>
+      </div>
+    </div>
+    <div class="unlock-card">
+      <div class="unlock-header"><div class="unlock-title">Insights Progress</div><div class="unlock-level active">Level 1 — Explorer</div></div>
+      <p class="unlock-desc">Complete tasks and assessments to unlock written breakdowns of each mental attribute.</p>
+      <div class="unlock-track" id="dash-unlock-track"></div>
+      <div class="unlock-track-label" id="dash-unlock-label"></div>
+      <div class="unlock-tiers">
+        <div class="tier-badge unlocked"><span class="tier-icon">🌱</span><div class="tier-name">Explorer</div></div>
+        <div class="tier-badge current"><span class="tier-icon">🔍</span><div class="tier-name">Analyst</div></div>
+        <div class="tier-badge"><span class="tier-icon">🧬</span><div class="tier-name">Specialist</div></div>
+        <div class="tier-badge"><span class="tier-icon">🏆</span><div class="tier-name">Elite</div></div>
+      </div>
+    </div>
+    <div class="section-label">Mental Attributes — tap to explore</div>
+    <div class="insight-panel" id="insight-panel">
+      <div class="insight-header"><div class="insight-title" id="insight-title"></div><button class="insight-close" onclick="closeInsight()">✕ Close</button></div>
+      <div id="insight-body"></div>
+    </div>
+    <div class="attr-grid" id="attr-grid"></div>
+    <div class="section-label">Recent Activity</div>
+    <div class="card" style="padding:14px 18px">
+      <div class="act-item"><div class="act-dot" style="background:var(--teal)"></div><div class="act-text">Completed <strong>Breathing exercise</strong> <span>· Focus</span></div><div class="act-time">2h ago</div></div>
+      <div class="act-item"><div class="act-dot" style="background:var(--accent)"></div><div class="act-text">Self-Assessment <span>submitted · +1 unlock point</span></div><div class="act-time">3d ago</div></div>
+      <div class="act-item"><div class="act-dot" style="background:var(--sand)"></div><div class="act-text">Tasks personalised <span>toward Resilience & Leadership</span></div><div class="act-time">3d ago</div></div>
+    </div>
+    <div class="card" style="display:flex;align-items:center;gap:14px;cursor:pointer;padding:16px 18px" onclick="showPage('assessment')">
+      <div style="width:38px;height:38px;border-radius:10px;background:rgba(181,98,62,0.1);display:flex;align-items:center;justify-content:center;font-size:17px;flex-shrink:0">📋</div>
+      <div style="flex:1"><div style="font-size:13px;font-weight:600;margin-bottom:2px">New Self-Assessment available</div><div style="font-size:12px;color:var(--muted)">Earns 1 unlock point · ~5 minutes</div></div>
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--muted2)" stroke-width="2"><path d="M9 18l6-6-6-6"/></svg>
+    </div>
+    <div style="display:flex;align-items:center;gap:12px;padding:14px 16px;background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);margin-bottom:12px;cursor:pointer">
+      <span style="font-size:18px;flex-shrink:0">💬</span>
+      <div style="flex:1"><div style="font-size:13px;font-weight:600;margin-bottom:2px">Have a question?</div><div style="font-size:12px;color:var(--muted)">Reach out to us anytime — we're here to help.</div></div>
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--muted2)" stroke-width="2"><path d="M9 18l6-6-6-6"/></svg>
+    </div>
+  </div>
 
-        // 18 questions across 6 categories (3 each)
-        const questions = [
-          // Resilience (RES)
-          { id: 1, category: 'Resilience', short: 'RES', text: 'I thrive under external pressure and perform my best when stakes are high' },
-          { id: 2, category: 'Resilience', short: 'RES', text: 'I succeed in hostile environments and maintain composure when facing adversity' },
-          { id: 3, category: 'Resilience', short: 'RES', text: 'I adapt quickly to change and bounce back from setbacks' },
-          
-          // Discipline (DIS)
-          { id: 4, category: 'Discipline', short: 'DIS', text: 'I demonstrate fair play and maintain integrity in all situations' },
-          { id: 5, category: 'Discipline', short: 'DIS', text: 'I avoid cautionable offenses and maintain self-control' },
-          { id: 6, category: 'Discipline', short: 'DIS', text: 'I am dedicated and goal-oriented in my approach' },
-          
-          // Game Intelligence (G.IN)
-          { id: 7, category: 'Game Intelligence', short: 'G.IN', text: 'I think ahead and demonstrate creativity in my approach' },
-          { id: 8, category: 'Game Intelligence', short: 'G.IN', text: 'I have strong problem-solving abilities' },
-          { id: 9, category: 'Game Intelligence', short: 'G.IN', text: 'I identify and use opportunities effectively' },
-          
-          // Focus (FOC)
-          { id: 10, category: 'Focus', short: 'FOC', text: 'I possess strong reframing skills and can shift perspective when needed' },
-          { id: 11, category: 'Focus', short: 'FOC', text: 'I demonstrate high self-awareness' },
-          { id: 12, category: 'Focus', short: 'FOC', text: 'I maintain emotional control and readiness to overcome failure' },
-          
-          // Influence (INF)
-          { id: 13, category: 'Influence', short: 'INF', text: 'I maintain a positive attitude that impacts those around me' },
-          { id: 14, category: 'Influence', short: 'INF', text: 'I demonstrate leadership and assertiveness' },
-          { id: 15, category: 'Influence', short: 'INF', text: 'I am a team player and level-headed in group settings' },
-          
-          // Intensity (INT)
-          { id: 16, category: 'Intensity', short: 'INT', text: 'I show strong determination in pursuing my goals' },
-          { id: 17, category: 'Intensity', short: 'INT', text: 'I bring consistent energy and vigor to my work' },
-          { id: 18, category: 'Intensity', short: 'INT', text: 'I am willing to take calculated risks' },
-        ];
+  <!-- ════ ASSESSMENT ════ -->
+  <div class="page" id="page-assessment">
+    <div class="topbar"><div><div class="page-title">Self-Assessment</div><div class="page-sub" id="assess-sub">Question 1 of 6</div></div></div>
+    <div class="assess-progress" id="assess-progress">
+      <div class="progress-pip done"></div><div class="progress-pip"></div><div class="progress-pip"></div>
+      <div class="progress-pip"></div><div class="progress-pip"></div><div class="progress-pip"></div>
+    </div>
+    <div class="score-preview" id="score-preview">
+      <div class="score-preview-top">
+        <div class="score-num" id="score-result">—</div>
+        <div class="score-info-text">Your Mental Ratio score for this session. Stored internally and visible to your specialist. Each submission earns <strong>1 unlock point</strong>.</div>
+      </div>
+      <div class="score-breakdown" id="score-breakdown"></div>
+    </div>
+    <div class="q-card" id="q-card">
+      <div class="q-attr-label" id="q-attr" style="display:none"></div>
+      <div class="q-text" id="q-text"></div>
+      <div class="answer-grid" id="answer-grid"></div>
+    </div>
+    <div class="q-nav" id="q-nav">
+      <button class="btn-secondary" id="btn-back" onclick="prevQ()" style="display:none">← Back</button>
+      <button class="btn-primary" id="btn-next" onclick="nextQ()" disabled>Next →</button>
+    </div>
+  </div>
 
-        function MentalRatioApp() {
-          const [currentPage, setCurrentPage] = useState('user');
-          const [answers, setAnswers] = useState({});
-          const [results, setResults] = useState(null);
+  <!-- ════ TASKS ════ -->
+  <div class="page" id="page-tasks">
+    <div class="topbar"><div><div class="page-title">Tasks</div><div class="page-sub">Personalised to your profile · 3 pending</div></div></div>
+    <div class="pts-card">
+      <div class="pts-icon">⚡</div>
+      <div class="pts-info"><div class="pts-label">Season Points</div><div class="pts-val">620 pts</div><div class="pts-bar-bg"><div class="pts-bar"></div></div></div>
+      <div style="text-align:right"><div style="font-size:10px;color:var(--muted2);text-transform:uppercase;letter-spacing:.8px">Next level</div><div style="font-family:'Fraunces',serif;font-weight:700;font-size:14px">380 pts</div></div>
+    </div>
+    <div class="unlock-card">
+      <div class="unlock-header"><div class="unlock-title">Insights Progress</div><div class="unlock-level active">Level 1 — Explorer</div></div>
+      <p class="unlock-desc">Each completed task or assessment earns <strong>1 unlock point</strong>. Reach the next level to unlock written attribute breakdowns.</p>
+      <div class="unlock-track" id="task-unlock-track"></div>
+      <div class="unlock-track-label" id="task-unlock-label"></div>
+    </div>
+    <div style="background:rgba(61,139,122,0.07);border:1px solid rgba(61,139,122,0.2);border-radius:12px;padding:14px 16px;margin-bottom:14px;display:flex;align-items:flex-start;gap:10px">
+      <span style="font-size:16px;flex-shrink:0">🧬</span>
+      <div><div style="font-size:12px;font-weight:600;color:var(--teal);margin-bottom:3px">Tasks personalised to your profile</div><div style="font-size:12px;color:var(--muted);line-height:1.5">Based on your last assessment, tasks are weighted toward <strong>Resilience</strong> and <strong>Leadership</strong>.</div></div>
+    </div>
+    <div class="filter-row">
+      <div class="chip active" onclick="filterTasks('all',this)">All</div>
+      <div class="chip" onclick="filterTasks('focus',this)">Focus</div>
+      <div class="chip" onclick="filterTasks('resilience',this)">Resilience</div>
+      <div class="chip" onclick="filterTasks('leadership',this)">Leadership</div>
+      <div class="chip" onclick="filterTasks('discipline',this)">Discipline</div>
+    </div>
+    <div class="section-label">Pending</div>
+    <div class="task-item personalised" data-attr="resilience"><div class="task-check" onclick="toggleTask(this,event)"></div><div class="task-body"><div class="task-title">Reflect on last week's most difficult moment</div><div class="task-meta"><span class="t-tag tag-resilience">Resilience</span><span class="t-tag tag-personalised">✦ For you</span><span class="task-pts">+40 pts · +1 unlock</span></div></div></div>
+    <div class="task-item personalised" data-attr="leadership"><div class="task-check" onclick="toggleTask(this,event)"></div><div class="task-body"><div class="task-title">Lead the warm-up session at next training</div><div class="task-meta"><span class="t-tag tag-leadership">Leadership</span><span class="t-tag tag-personalised">✦ For you</span><span class="task-pts">+50 pts · +1 unlock</span></div></div></div>
+    <div class="task-item" data-attr="focus"><div class="task-check" onclick="toggleTask(this,event)"></div><div class="task-body"><div class="task-title">10-min mindfulness breathing</div><div class="task-meta"><span class="t-tag tag-focus">Focus</span><span class="task-type">In-app</span><span class="task-pts">+40 pts · +1 unlock</span></div></div></div>
+    <div class="section-label">Optional</div>
+    <div class="task-item" data-attr="discipline"><div class="task-check" onclick="toggleTask(this,event)"></div><div class="task-body"><div class="task-title">Cold shower routine — 5 consecutive days</div><div class="task-meta"><span class="t-tag tag-discipline">Discipline</span><span class="task-type">External habit</span><span class="task-pts">+60 pts · +1 unlock</span></div></div></div>
+    <div class="task-item" data-attr="focus"><div class="task-check" onclick="toggleTask(this,event)"></div><div class="task-body"><div class="task-title">Play chess for 20 minutes</div><div class="task-meta"><span class="t-tag tag-focus">Focus</span><span class="task-type">External</span><span class="task-pts">+25 pts · +1 unlock</span></div></div></div>
+    <div class="section-label">Completed</div>
+    <div class="task-item" data-attr="focus"><div class="task-check done" onclick="toggleTask(this,event)"></div><div class="task-body"><div class="task-title done">Pre-game breathing exercise</div><div class="task-meta"><span class="t-tag tag-focus">Focus</span><span class="task-pts">+40 pts earned</span></div></div></div>
+    <div class="task-item" data-attr="discipline"><div class="task-check done" onclick="toggleTask(this,event)"></div><div class="task-body"><div class="task-title done">Sleep 8h for 3 nights in a row</div><div class="task-meta"><span class="t-tag tag-discipline">Discipline</span><span class="task-pts">+50 pts earned</span></div></div></div>
+  </div>
 
-          const userData = {
-            name: "Alex Johnson",
-            email: "alex.johnson@example.com",
-            joinDate: "January 2024",
-            totalAssessments: 3,
-            pastAssessments: [
-              { 
-                date: "Feb 10, 2025", 
-                overall: 87,
-                scores: { 'RES': 93, 'DIS': 87, 'G.IN': 93, 'FOC': 88, 'INF': 87, 'INT': 75 }
-              },
-              { 
-                date: "Jan 28, 2025", 
-                overall: 84,
-                scores: { 'RES': 90, 'DIS': 85, 'G.IN': 90, 'FOC': 85, 'INF': 85, 'INT': 72 }
-              },
-              { 
-                date: "Jan 15, 2025", 
-                overall: 81,
-                scores: { 'RES': 87, 'DIS': 82, 'G.IN': 87, 'FOC': 82, 'INF': 82, 'INT': 68 }
-              }
-            ]
-          };
+  <!-- ════ HISTORY ════ -->
+  <div class="page" id="page-history">
+    <div class="topbar"><div><div class="page-title">History</div><div class="page-sub">Assessments, attributes & points over time</div></div></div>
 
-          const handleAnswerChange = (questionId, value) => {
-            setAnswers(prev => ({ ...prev, [questionId]: parseInt(value) }));
-          };
+    <div class="tab-row">
+      <button class="tab-btn active" onclick="switchHistTab('scores',this)">Scores</button>
+      <button class="tab-btn" onclick="switchHistTab('attributes',this)">Attributes</button>
+      <button class="tab-btn" onclick="switchHistTab('points',this)">Points</button>
+    </div>
 
-          const calculateResults = (e) => {
-            e.preventDefault();
-            
-            const categoryScores = {};
-            const categoryQuestions = {};
-            
-            questions.forEach(q => {
-              const key = q.short;
-              if (!categoryScores[key]) {
-                categoryScores[key] = 0;
-                categoryQuestions[key] = 0;
-              }
-              if (answers[q.id]) {
-                categoryScores[key] += answers[q.id];
-                categoryQuestions[key]++;
-              }
-            });
+    <!-- SCORES TAB -->
+    <div class="hist-section active" id="hist-scores">
+      <div class="chart-wrap">
+        <div class="chart-title">Mental Ratio Score</div>
+        <div class="chart-sub">Self-assessment history · 6 sessions</div>
+        <svg class="chart" height="120" viewBox="0 0 420 120">
+          <!-- Grid lines -->
+          <line x1="0" y1="20" x2="420" y2="20" stroke="#eee8e0" stroke-width="1"/>
+          <line x1="0" y1="60" x2="420" y2="60" stroke="#eee8e0" stroke-width="1"/>
+          <line x1="0" y1="100" x2="420" y2="100" stroke="#eee8e0" stroke-width="1"/>
+          <text x="0" y="18" class="axis-label">100</text>
+          <text x="0" y="58" class="axis-label">50</text>
+          <text x="0" y="98" class="axis-label">0</text>
+          <!-- Score line: sessions at x=60,120,180,240,300,360 scores:55,60,62,68,68,72 -->
+          <polyline points="60,45 120,40 180,38 240,32 300,32 360,28" fill="none" stroke="#b5623e" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+          <!-- Area fill -->
+          <polygon points="60,45 120,40 180,38 240,32 300,32 360,28 360,100 60,100" fill="rgba(181,98,62,0.08)"/>
+          <!-- Dots -->
+          <circle cx="60"  cy="45" r="4" fill="#b5623e"/>
+          <circle cx="120" cy="40" r="4" fill="#b5623e"/>
+          <circle cx="180" cy="38" r="4" fill="#b5623e"/>
+          <circle cx="240" cy="32" r="4" fill="#b5623e"/>
+          <circle cx="300" cy="32" r="4" fill="#b5623e"/>
+          <circle cx="360" cy="28" r="5" fill="#b5623e" stroke="#faf7f4" stroke-width="2"/>
+          <!-- X labels -->
+          <text x="46"  y="118" class="axis-label">Sep</text>
+          <text x="106" y="118" class="axis-label">Oct</text>
+          <text x="166" y="118" class="axis-label">Nov</text>
+          <text x="226" y="118" class="axis-label">Dec</text>
+          <text x="286" y="118" class="axis-label">Jan</text>
+          <text x="346" y="118" class="axis-label">Feb</text>
+        </svg>
+      </div>
 
-            const results = {};
-            Object.keys(categoryScores).forEach(category => {
-              const avg = categoryScores[category] / categoryQuestions[category];
-              results[category] = Math.round((avg / 5) * 100);
-            });
+      <div class="section-label">Assessment Sessions</div>
+      <!-- Session cards -->
+      <div class="hist-item">
+        <div class="hist-item-top"><div><div style="font-family:'Fraunces',serif;font-weight:700;font-size:13px">February 2026</div><div class="hist-item-date">14 Feb · Session 6</div></div><div class="hist-item-score">72</div></div>
+        <div class="hist-mini-bars">
+          <div class="hist-mini-row"><div class="hist-mini-label">Focus</div><div class="hist-mini-bg"><div class="hist-mini-bar" style="width:78%;background:var(--focus)"></div></div><div class="hist-mini-val" style="color:var(--focus)">78</div></div>
+          <div class="hist-mini-row"><div class="hist-mini-label">Resilience</div><div class="hist-mini-bg"><div class="hist-mini-bar" style="width:65%;background:var(--resilience)"></div></div><div class="hist-mini-val" style="color:var(--resilience)">65</div></div>
+          <div class="hist-mini-row"><div class="hist-mini-label">Game IQ</div><div class="hist-mini-bg"><div class="hist-mini-bar" style="width:81%;background:var(--gameiq)"></div></div><div class="hist-mini-val" style="color:var(--gameiq)">81</div></div>
+          <div class="hist-mini-row"><div class="hist-mini-label">Leadership</div><div class="hist-mini-bg"><div class="hist-mini-bar" style="width:60%;background:var(--leadership)"></div></div><div class="hist-mini-val" style="color:var(--leadership)">60</div></div>
+          <div class="hist-mini-row"><div class="hist-mini-label">Assertiveness</div><div class="hist-mini-bg"><div class="hist-mini-bar" style="width:70%;background:var(--assertive)"></div></div><div class="hist-mini-val" style="color:var(--assertive)">70</div></div>
+          <div class="hist-mini-row"><div class="hist-mini-label">Discipline</div><div class="hist-mini-bg"><div class="hist-mini-bar" style="width:76%;background:var(--discipline)"></div></div><div class="hist-mini-val" style="color:var(--discipline)">76</div></div>
+        </div>
+      </div>
+      <div class="hist-item">
+        <div class="hist-item-top"><div><div style="font-family:'Fraunces',serif;font-weight:700;font-size:13px">January 2026</div><div class="hist-item-date">20 Jan · Session 5</div></div><div class="hist-item-score">68</div></div>
+        <div class="hist-mini-bars">
+          <div class="hist-mini-row"><div class="hist-mini-label">Focus</div><div class="hist-mini-bg"><div class="hist-mini-bar" style="width:72%;background:var(--focus)"></div></div><div class="hist-mini-val" style="color:var(--focus)">72</div></div>
+          <div class="hist-mini-row"><div class="hist-mini-label">Resilience</div><div class="hist-mini-bg"><div class="hist-mini-bar" style="width:60%;background:var(--resilience)"></div></div><div class="hist-mini-val" style="color:var(--resilience)">60</div></div>
+          <div class="hist-mini-row"><div class="hist-mini-label">Game IQ</div><div class="hist-mini-bg"><div class="hist-mini-bar" style="width:78%;background:var(--gameiq)"></div></div><div class="hist-mini-val" style="color:var(--gameiq)">78</div></div>
+          <div class="hist-mini-row"><div class="hist-mini-label">Leadership</div><div class="hist-mini-bg"><div class="hist-mini-bar" style="width:55%;background:var(--leadership)"></div></div><div class="hist-mini-val" style="color:var(--leadership)">55</div></div>
+          <div class="hist-mini-row"><div class="hist-mini-label">Assertiveness</div><div class="hist-mini-bg"><div class="hist-mini-bar" style="width:68%;background:var(--assertive)"></div></div><div class="hist-mini-val" style="color:var(--assertive)">68</div></div>
+          <div class="hist-mini-row"><div class="hist-mini-label">Discipline</div><div class="hist-mini-bg"><div class="hist-mini-bar" style="width:72%;background:var(--discipline)"></div></div><div class="hist-mini-val" style="color:var(--discipline)">72</div></div>
+        </div>
+      </div>
+    </div>
 
-            setResults(results);
-            setCurrentPage('results');
-          };
+    <!-- ATTRIBUTES TAB -->
+    <div class="hist-section" id="hist-attributes">
+      <div class="chart-wrap">
+        <div class="chart-title">Attribute Trends</div>
+        <div class="chart-sub">All 6 attributes over 6 sessions</div>
+        <svg class="chart" height="140" viewBox="0 0 420 140">
+          <line x1="30" y1="10"  x2="420" y2="10"  stroke="#eee8e0" stroke-width="1"/>
+          <line x1="30" y1="50"  x2="420" y2="50"  stroke="#eee8e0" stroke-width="1"/>
+          <line x1="30" y1="90"  x2="420" y2="90"  stroke="#eee8e0" stroke-width="1"/>
+          <line x1="30" y1="130" x2="420" y2="130" stroke="#eee8e0" stroke-width="1"/>
+          <text x="0" y="13"  class="axis-label">100</text>
+          <text x="0" y="53"  class="axis-label">60</text>
+          <text x="0" y="93"  class="axis-label">20</text>
+          <!-- Focus #7e6fa0 -->
+          <polyline points="60,38 120,34 180,32 240,30 300,28 360,22" fill="none" stroke="#7e6fa0" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" stroke-dasharray="0"/>
+          <!-- Resilience #3d8b7a -->
+          <polyline points="60,68 120,64 180,60 240,56 300,58 360,53" fill="none" stroke="#3d8b7a" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+          <!-- Game IQ #6b9e78 -->
+          <polyline points="60,34 120,30 180,28 240,26 300,24 360,20" fill="none" stroke="#6b9e78" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+          <!-- Leadership #b09070 -->
+          <polyline points="60,80 120,76 180,72 240,70 300,68 360,64" fill="none" stroke="#b09070" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+          <!-- Assertiveness #c47a7a -->
+          <polyline points="60,54 120,50 180,48 240,46 300,44 360,42" fill="none" stroke="#c47a7a" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+          <!-- Discipline #b5623e -->
+          <polyline points="60,44 120,40 180,38 240,36 300,34 360,31" fill="none" stroke="#b5623e" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+          <!-- X labels -->
+          <text x="46"  y="142" class="axis-label">Sep</text>
+          <text x="106" y="142" class="axis-label">Oct</text>
+          <text x="166" y="142" class="axis-label">Nov</text>
+          <text x="226" y="142" class="axis-label">Dec</text>
+          <text x="286" y="142" class="axis-label">Jan</text>
+          <text x="346" y="142" class="axis-label">Feb</text>
+        </svg>
+        <div class="chart-legend">
+          <div class="legend-item"><div class="legend-dot" style="background:var(--focus)"></div>Focus</div>
+          <div class="legend-item"><div class="legend-dot" style="background:var(--resilience)"></div>Resilience</div>
+          <div class="legend-item"><div class="legend-dot" style="background:var(--gameiq)"></div>Game IQ</div>
+          <div class="legend-item"><div class="legend-dot" style="background:var(--leadership)"></div>Leadership</div>
+          <div class="legend-item"><div class="legend-dot" style="background:var(--assertive)"></div>Assertiveness</div>
+          <div class="legend-item"><div class="legend-dot" style="background:var(--discipline)"></div>Discipline</div>
+        </div>
+      </div>
+    </div>
 
-          const isFormComplete = () => questions.every(q => answers[q.id] !== undefined);
+    <!-- POINTS TAB -->
+    <div class="hist-section" id="hist-points">
+      <div class="chart-wrap">
+        <div class="chart-title">Season Points</div>
+        <div class="chart-sub">Cumulative points earned over time</div>
+        <svg class="chart" height="120" viewBox="0 0 420 120">
+          <line x1="0" y1="20"  x2="420" y2="20"  stroke="#eee8e0" stroke-width="1"/>
+          <line x1="0" y1="60"  x2="420" y2="60"  stroke="#eee8e0" stroke-width="1"/>
+          <line x1="0" y1="100" x2="420" y2="100" stroke="#eee8e0" stroke-width="1"/>
+          <text x="0" y="18"  class="axis-label">1000</text>
+          <text x="0" y="58"  class="axis-label">500</text>
+          <text x="0" y="98"  class="axis-label">0</text>
+          <!-- pts cumulative: 80,180,300,420,530,620 -->
+          <polygon points="60,92 120,82 180,70 240,58 300,47 360,38 360,100 60,100" fill="rgba(181,98,62,0.08)"/>
+          <polyline points="60,92 120,82 180,70 240,58 300,47 360,38" fill="none" stroke="#b5623e" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+          <circle cx="60"  cy="92" r="4" fill="#b5623e"/>
+          <circle cx="120" cy="82" r="4" fill="#b5623e"/>
+          <circle cx="180" cy="70" r="4" fill="#b5623e"/>
+          <circle cx="240" cy="58" r="4" fill="#b5623e"/>
+          <circle cx="300" cy="47" r="4" fill="#b5623e"/>
+          <circle cx="360" cy="38" r="5" fill="#b5623e" stroke="#faf7f4" stroke-width="2"/>
+          <text x="46"  y="118" class="axis-label">Sep</text>
+          <text x="106" y="118" class="axis-label">Oct</text>
+          <text x="166" y="118" class="axis-label">Nov</text>
+          <text x="226" y="118" class="axis-label">Dec</text>
+          <text x="286" y="118" class="axis-label">Jan</text>
+          <text x="346" y="118" class="axis-label">Feb</text>
+        </svg>
+      </div>
 
-          const resetAssessment = () => {
-            setAnswers({});
-            setResults(null);
-            setCurrentPage('assessment');
-          };
+      <div class="section-label">Points Log</div>
+      <div class="card" style="padding:14px 18px">
+        <div class="pts-hist-item"><div class="pts-hist-icon" style="background:rgba(61,139,122,0.1)">✓</div><div class="pts-hist-info"><div class="pts-hist-label">Pre-game breathing exercise</div><div class="pts-hist-date">14 Feb · Task</div></div><div class="pts-hist-val">+40</div></div>
+        <div class="pts-hist-item"><div class="pts-hist-icon" style="background:rgba(181,98,62,0.1)">📋</div><div class="pts-hist-info"><div class="pts-hist-label">Self-Assessment submitted</div><div class="pts-hist-date">14 Feb · Assessment</div></div><div class="pts-hist-val">+20</div></div>
+        <div class="pts-hist-item"><div class="pts-hist-icon" style="background:rgba(61,139,122,0.1)">✓</div><div class="pts-hist-info"><div class="pts-hist-label">Sleep 8h for 3 nights</div><div class="pts-hist-date">10 Feb · Task</div></div><div class="pts-hist-val">+50</div></div>
+        <div class="pts-hist-item"><div class="pts-hist-icon" style="background:rgba(61,139,122,0.1)">✓</div><div class="pts-hist-info"><div class="pts-hist-label">Chess — 20 min session</div><div class="pts-hist-date">7 Feb · Task</div></div><div class="pts-hist-val">+25</div></div>
+        <div class="pts-hist-item"><div class="pts-hist-icon" style="background:rgba(176,144,112,0.1)">🏆</div><div class="pts-hist-info"><div class="pts-hist-label">Level up bonus</div><div class="pts-hist-date">1 Feb · Milestone</div></div><div class="pts-hist-val">+50</div></div>
+        <div class="pts-hist-item"><div class="pts-hist-icon" style="background:rgba(181,98,62,0.1)">📋</div><div class="pts-hist-info"><div class="pts-hist-label">Self-Assessment submitted</div><div class="pts-hist-date">20 Jan · Assessment</div></div><div class="pts-hist-val">+20</div></div>
+      </div>
+    </div>
+  </div>
 
-          const getOverallScore = (scores) => {
-            const values = Object.values(scores);
-            return Math.round(values.reduce((a, b) => a + b, 0) / values.length);
-          };
+  <!-- ════ OUTSIDER EVALUATION ════ -->
+  <div class="page" id="page-evaluation">
+    <div class="topbar"><div><div class="page-title">Outsider Evaluation</div><div class="page-sub">Request a professional assessment of your mental profile</div></div></div>
 
-          const getCategoryColor = (short) => {
-            const colors = {
-              'RES': 'bg-red-600',
-              'DIS': 'bg-blue-600',
-              'G.IN': 'bg-yellow-600',
-              'FOC': 'bg-orange-600',
-              'INF': 'bg-green-600',
-              'INT': 'bg-teal-600'
-            };
-            return colors[short] || 'bg-gray-600';
-          };
+    <!-- Active request tracker -->
+    <div class="tracker">
+      <div class="tracker-title">Current Request — Feb 2026 · Anonymous</div>
+      <div class="tracker-steps">
+        <div class="tracker-step done">
+          <div class="step-dot done">✓</div>
+          <div class="step-body">
+            <div class="step-label done">Request submitted</div>
+            <div class="step-date">12 Feb 2026</div>
+          </div>
+        </div>
+        <div class="tracker-step done">
+          <div class="step-dot done">✓</div>
+          <div class="step-body">
+            <div class="step-label done">Payment confirmed</div>
+            <div class="step-date">12 Feb 2026 · €50.00</div>
+          </div>
+        </div>
+        <div class="tracker-step">
+          <div class="step-dot active">…</div>
+          <div class="step-body">
+            <div class="step-label active">Under review</div>
+            <div class="step-desc">Your assessment data has been shared with the specialist. Estimated 3–5 working days.</div>
+          </div>
+        </div>
+        <div class="tracker-step">
+          <div class="step-dot pending">4</div>
+          <div class="step-body">
+            <div class="step-label pending">Report delivered</div>
+            <div class="step-desc">You will be notified when the specialist's report is ready.</div>
+          </div>
+        </div>
+      </div>
+    </div>
 
-          const getCategoryName = (short) => {
-            const names = {
-              'RES': 'Resilience',
-              'DIS': 'Discipline',
-              'G.IN': 'Game Intelligence',
-              'FOC': 'Focus',
-              'INF': 'Influence',
-              'INT': 'Intensity'
-            };
-            return names[short] || short;
-          };
+    <!-- New request CTA -->
+    <div class="premium-hero">
+      <div class="premium-hero-top">
+        <div class="premium-hero-title">Request New Evaluation</div>
+        <div class="premium-badge">Premium</div>
+      </div>
+      <p>A specialist will review your full assessment history and provide a written evaluation of all 6 mental attributes — independent of your self-scoring.</p>
+      <div class="price-row">
+        <div class="price-val">€50</div>
+        <div class="price-note">One-time per request<br>Results in 3–5 working days</div>
+      </div>
+      <button class="btn-purchase" onclick="openPurchaseModal()">Request Evaluation — €50</button>
+    </div>
 
-          return (
-            <div className="flex min-h-screen" style={{ background: 'linear-gradient(135deg, #2C3E50 0%, #4A3B5C 50%, #2C3E50 100%)' }}>
-              {/* Sidebar */}
-              <div className="w-64 bg-brain-navy/90 backdrop-blur-sm text-white p-6 flex flex-col border-r border-brain-pink/20">
-                <div className="mb-8">
-                  <h1 className="text-2xl font-bold mb-1" style={{ color: '#E91E8C' }}>Mental Ratio</h1>
-                  <p className="text-gray-300 text-sm">Assessment Report</p>
-                </div>
+    <!-- Past evaluations -->
+    <div class="section-label">Past Evaluations</div>
+    <div class="past-evals">
+      <div class="past-eval-item">
+        <div class="eval-score-badge" style="background:rgba(61,139,122,0.1);color:var(--teal)">68</div>
+        <div class="past-eval-info">
+          <div class="past-eval-label">Specialist Evaluation</div>
+          <div class="past-eval-meta">November 2025 · Anonymous specialist</div>
+        </div>
+        <div class="eval-status status-completed">Completed</div>
+      </div>
+      <div class="past-eval-item">
+        <div class="eval-score-badge" style="background:rgba(176,144,112,0.1);color:var(--sand)">61</div>
+        <div class="past-eval-info">
+          <div class="past-eval-label">Specialist Evaluation</div>
+          <div class="past-eval-meta">August 2025 · Anonymous specialist</div>
+        </div>
+        <div class="eval-status status-completed">Completed</div>
+      </div>
+    </div>
 
-                <nav className="space-y-2 flex-1">
-                  <button
-                    onClick={() => setCurrentPage('user')}
-                    className={`w-full flex items-center gap-3 px-4 py-3 rounded-lg transition ${
-                      currentPage === 'user' 
-                        ? 'bg-brain-pink/20 font-semibold border border-brain-pink/40' 
-                        : 'hover:bg-white/5'
-                    }`}
-                  >
-                    <UserCircle className="w-5 h-5" />
-                    <span>User</span>
-                  </button>
-                  
-                  <button
-                    onClick={() => setCurrentPage('assessment')}
-                    className={`w-full flex items-center gap-3 px-4 py-3 rounded-lg transition ${
-                      currentPage === 'assessment' 
-                        ? 'bg-brain-pink/20 font-semibold border border-brain-pink/40' 
-                        : 'hover:bg-white/5'
-                    }`}
-                  >
-                    <ClipboardList className="w-5 h-5" />
-                    <span>Self-Evaluation</span>
-                  </button>
-                  
-                  <button
-                    onClick={() => setCurrentPage('results')}
-                    className={`w-full flex items-center gap-3 px-4 py-3 rounded-lg transition ${
-                      currentPage === 'results' 
-                        ? 'bg-brain-pink/20 font-semibold border border-brain-pink/40' 
-                        : 'hover:bg-white/5'
-                    } ${!results && 'opacity-50 cursor-not-allowed'}`}
-                    disabled={!results}
-                  >
-                    <BarChart3 className="w-5 h-5" />
-                    <span>Results</span>
-                  </button>
+    <!-- What's included -->
+    <div class="card">
+      <div style="font-family:'Fraunces',serif;font-weight:700;font-size:14px;margin-bottom:12px">What's included</div>
+      <div style="display:flex;flex-direction:column;gap:10px">
+        <div style="display:flex;gap:10px;align-items:flex-start"><span style="color:var(--teal);font-size:14px;flex-shrink:0">✦</span><div style="font-size:13px;color:var(--muted);line-height:1.5">Written breakdown of all 6 attributes from an external specialist perspective</div></div>
+        <div style="display:flex;gap:10px;align-items:flex-start"><span style="color:var(--teal);font-size:14px;flex-shrink:0">✦</span><div style="font-size:13px;color:var(--muted);line-height:1.5">Comparison between your self-score and the external evaluation</div></div>
+      </div>
+    </div>
 
-                  <button
-                    onClick={() => setCurrentPage('external')}
-                    className={`w-full flex items-center gap-3 px-4 py-3 rounded-lg transition ${
-                      currentPage === 'external' 
-                        ? 'bg-brain-pink/20 font-semibold border border-brain-pink/40' 
-                        : 'hover:bg-white/5'
-                    }`}
-                  >
-                    <Users className="w-5 h-5" />
-                    <span className="flex items-center gap-2">
-                      External Evaluation
-                      <Crown className="w-3 h-3 text-yellow-300" />
-                    </span>
-                  </button>
-                </nav>
+    <div style="display:flex;align-items:center;gap:12px;padding:14px 16px;background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);margin-bottom:12px;cursor:pointer">
+      <span style="font-size:18px;flex-shrink:0">💬</span>
+      <div style="flex:1"><div style="font-size:13px;font-weight:600;margin-bottom:2px">Questions about the evaluation?</div><div style="font-size:12px;color:var(--muted)">Contact us before or after requesting — we'll walk you through it.</div></div>
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--muted2)" stroke-width="2"><path d="M9 18l6-6-6-6"/></svg>
+    </div>
+  </div>
 
-                <div className="mt-auto pt-6 border-t border-white/10">
-                  <div className="text-sm text-gray-300">
-                    <p className="font-semibold text-white mb-1">{userData.name}</p>
-                    <p>{userData.email}</p>
-                  </div>
-                </div>
-              </div>
+<!-- PURCHASE MODAL -->
+<div class="modal-overlay" id="modal-overlay" onclick="closePurchaseModal()">
+  <div class="modal" onclick="event.stopPropagation()">
+    <div class="modal-title">Confirm Evaluation Request</div>
+    <div class="modal-desc">Your current assessment data will be shared with a specialist. You will be notified when the report is ready, typically within 3–5 working days.</div>
+    <div class="modal-price-row">
+      <div class="modal-price">€50</div>
+      <div class="modal-price-note">one-time · this request</div>
+    </div>
+    <button class="modal-btn" onclick="confirmPurchase()">Confirm & Pay €50</button>
+    <button class="modal-cancel" onclick="closePurchaseModal()">Cancel</button>
+  </div>
+</div>
 
-              {/* Main Content */}
-              <div className="flex-1 p-8 overflow-y-auto">
-                {currentPage === 'user' && (
-                  <div className="max-w-5xl mx-auto">
-                    <h1 className="text-4xl font-bold text-white mb-8">User Profile</h1>
-                    
-                    <div className="bg-white/5 backdrop-blur-md rounded-lg border border-brain-pink/20 p-8 mb-8">
-                      <div className="flex items-center gap-6 mb-6">
-                        <div className="w-24 h-24 rounded-full flex items-center justify-center" style={{ background: 'linear-gradient(135deg, #E91E8C, #4A9EBD)' }}>
-                          <User className="w-12 h-12 text-white" />
-                        </div>
-                        <div>
-                          <h2 className="text-3xl font-bold text-white">{userData.name}</h2>
-                          <p className="text-gray-300">{userData.email}</p>
-                          <p className="text-sm text-gray-400">Member since {userData.joinDate}</p>
-                        </div>
-                      </div>
+<div class="toast" id="toast">✓ Done</div>
 
-                      <div className="grid grid-cols-3 gap-4">
-                        <div className="bg-brain-pink/10 backdrop-blur-sm p-4 rounded-lg border border-brain-pink/20">
-                          <p className="text-sm text-gray-300 mb-1">Total Assessments</p>
-                          <p className="text-3xl font-bold text-brain-pink">{userData.totalAssessments}</p>
-                        </div>
-                        <div className="bg-brain-blue/10 backdrop-blur-sm p-4 rounded-lg border border-brain-blue/20">
-                          <p className="text-sm text-gray-300 mb-1">Latest Score</p>
-                          <p className="text-3xl font-bold text-brain-blue">{userData.pastAssessments[0].overall}</p>
-                        </div>
-                        <div className="bg-purple-500/10 backdrop-blur-sm p-4 rounded-lg border border-purple-500/20">
-                          <p className="text-sm text-gray-300 mb-1">Average Score</p>
-                          <p className="text-3xl font-bold text-purple-400">
-                            {Math.round(userData.pastAssessments.reduce((sum, a) => sum + a.overall, 0) / userData.pastAssessments.length)}
-                          </p>
-                        </div>
-                      </div>
+<script>
+  // ── State ──
+  const UNLOCK_TOTAL = 10;
+  let unlockPoints = 4;
 
-                      <button
-                        onClick={() => setCurrentPage('assessment')}
-                        className="w-full mt-6 py-4 rounded-lg font-semibold text-lg transition"
-                        style={{ background: 'linear-gradient(135deg, #E91E8C, #4A9EBD)', color: 'white' }}
-                      >
-                        Start New Assessment
-                      </button>
-                    </div>
+  const attrs = [
+    { key:'focus',      icon:'🎯', name:'Focus',        score:78, color:'var(--focus)',      unlocked:true,
+      strengths:'You demonstrate strong capacity to enter a concentrated state during structured training sessions. Your pre-game routines appear to anchor your attention effectively.',
+      weaknesses:'Under unexpected disruptions — crowd noise, referee decisions — your concentration shows fragility. Recovery time after distraction is above average.' },
+    { key:'resilience', icon:'🏔️', name:'Resilience',   score:65, color:'var(--resilience)', unlocked:false, strengths:'', weaknesses:'' },
+    { key:'gameiq',     icon:'🧠', name:'Game IQ',      score:81, color:'var(--gameiq)',      unlocked:true,
+      strengths:'Decision-making under time pressure is a clear asset. You read space ahead of the ball and anticipate transitions before they develop.',
+      weaknesses:'Late-game fatigue affects decision quality. Complex multi-option scenarios sometimes produce hesitation where instinct should lead.' },
+    { key:'leadership', icon:'👑', name:'Leadership',   score:60, color:'var(--leadership)', unlocked:false, strengths:'', weaknesses:'' },
+    { key:'assertive',  icon:'⚔️', name:'Assertiveness',score:70, color:'var(--assertive)',  unlocked:false, strengths:'', weaknesses:'' },
+    { key:'discipline', icon:'🔒', name:'Discipline',   score:76, color:'var(--discipline)', unlocked:true,
+      strengths:'Routine adherence is above average. Sleep and nutrition habits are consistent, and you respond well to structured weekly training blocks.',
+      weaknesses:'Discipline shows vulnerability when external motivation is absent — specifically during low-stakes periods mid-season.' },
+  ];
 
-                    <div className="bg-white/5 backdrop-blur-md rounded-lg border border-brain-pink/20 p-8">
-                      <h2 className="text-2xl font-bold text-white mb-6">Past Assessments</h2>
-                      
-                      <div className="space-y-4">
-                        {userData.pastAssessments.map((assessment, idx) => (
-                          <div key={idx} className="bg-white/5 backdrop-blur-sm border border-white/10 rounded-lg p-6 hover:border-brain-pink/40 transition">
-                            <div className="flex justify-between items-center mb-4">
-                              <div>
-                                <p className="text-sm text-gray-400">{assessment.date}</p>
-                                <div className="flex items-center gap-3 mt-1">
-                                  <span className="text-4xl font-black text-brain-pink">{assessment.overall}</span>
-                                </div>
-                              </div>
-                            </div>
-                            
-                            <div className="grid grid-cols-3 gap-3">
-                              {Object.entries(assessment.scores).map(([category, score]) => (
-                                <div key={category} className="bg-white/5 backdrop-blur-sm p-3 rounded border border-white/10">
-                                  <p className="text-xs text-gray-400 mb-1">{category}</p>
-                                  <p className="text-2xl font-bold text-white">{score}</p>
-                                </div>
-                              ))}
-                            </div>
-                          </div>
-                        ))}
-                      </div>
-                    </div>
-                  </div>
-                )}
+  // ── Unlock tracks ──
+  function renderUnlockTracks() {
+    ['dash','task'].forEach(prefix => {
+      const track = document.getElementById(prefix+'-unlock-track');
+      const label = document.getElementById(prefix+'-unlock-label');
+      if (!track) return;
+      track.innerHTML = '';
+      for (let i=0;i<UNLOCK_TOTAL;i++) {
+        const pip = document.createElement('div');
+        pip.className = 'unlock-pip'+(i<unlockPoints?' filled':'');
+        track.appendChild(pip);
+      }
+      if (label) label.textContent = `${unlockPoints} / ${UNLOCK_TOTAL} points toward Level 2 — Analyst`;
+    });
+  }
 
-                {currentPage === 'assessment' && (
-                  <div className="max-w-4xl mx-auto">
-                    <h1 className="text-4xl font-bold text-white mb-2">Self-Evaluation</h1>
-                    <p className="text-gray-300 mb-8">Rate each statement from 1 (Strongly Disagree) to 5 (Strongly Agree)</p>
-                    
-                    <form onSubmit={calculateResults} className="bg-white/5 backdrop-blur-md rounded-lg border border-brain-pink/20 p-8">
-                      <div className="space-y-8">
-                        {questions.map((question) => (
-                          <div key={question.id} className="border-b border-white/10 pb-6 last:border-0">
-                            <div className="flex items-center gap-3 mb-2">
-                              <span className={`${getCategoryColor(question.short)} text-white px-3 py-1 rounded text-xs font-bold`}>
-                                {question.short}
-                              </span>
-                              <p className="text-sm font-semibold text-gray-300">{question.category}</p>
-                            </div>
-                            <p className="text-white mb-4 font-medium">{question.id}. {question.text}</p>
-                            
-                            <div className="flex gap-3">
-                              {[1, 2, 3, 4, 5].map(value => (
-                                <label key={value} className="flex-1">
-                                  <input
-                                    type="radio"
-                                    name={`question-${question.id}`}
-                                    value={value}
-                                    checked={answers[question.id] === value}
-                                    onChange={(e) => handleAnswerChange(question.id, e.target.value)}
-                                    className="sr-only peer"
-                                    required
-                                  />
-                                  <div className="border-2 border-white/20 rounded-lg p-3 text-center cursor-pointer transition peer-checked:border-brain-pink peer-checked:bg-brain-pink/20 hover:border-brain-pink/60">
-                                    <div className="text-2xl font-bold text-white">{value}</div>
-                                    <div className="text-xs text-gray-400 mt-1">
-                                      {value === 1 ? 'Strongly Disagree' : value === 3 ? 'Neutral' : value === 5 ? 'Strongly Agree' : ''}
-                                    </div>
-                                  </div>
-                                </label>
-                              ))}
-                            </div>
-                          </div>
-                        ))}
-                      </div>
+  // ── Attr grid ──
+  function renderAttrGrid() {
+    const grid = document.getElementById('attr-grid');
+    grid.innerHTML = '';
+    attrs.forEach(a => {
+      const card = document.createElement('div');
+      card.className = 'attr-card';
+      card.onclick = () => openInsight(a.key);
+      card.innerHTML = `
+        <span class="attr-icon">${a.icon}</span>
+        <div class="attr-name">${a.name}</div>
+        <div class="attr-score" style="color:${a.color}">${a.score}</div>
+        <div class="attr-bar-bg"><div class="attr-bar" style="width:${a.score}%;background:${a.color}"></div></div>
+        ${a.unlocked
+          ? `<div class="attr-locked"><span style="font-size:10px;color:var(--teal)">✦ Insight available</span></div>`
+          : `<div class="attr-locked"><span style="font-size:11px">🔒</span><span class="attr-locked-label">${UNLOCK_TOTAL-unlockPoints} pts to unlock</span></div>`}
+      `;
+      grid.appendChild(card);
+    });
+  }
 
-                      <div className="mt-8 flex gap-4">
-                        <button
-                          type="button"
-                          onClick={resetAssessment}
-                          className="flex-1 bg-white/10 text-white py-4 rounded-lg font-semibold hover:bg-white/20 transition border border-white/20"
-                        >
-                          Reset
-                        </button>
-                        <button
-                          type="submit"
-                          disabled={!isFormComplete()}
-                          className="flex-1 py-4 rounded-lg font-semibold transition disabled:opacity-50 disabled:cursor-not-allowed"
-                          style={{ background: isFormComplete() ? 'linear-gradient(135deg, #E91E8C, #4A9EBD)' : '#666', color: 'white' }}
-                        >
-                          Calculate Results
-                        </button>
-                      </div>
-                    </form>
-                  </div>
-                )}
+  // ── Insight panel ──
+  function openInsight(key) {
+    const a = attrs.find(x=>x.key===key);
+    const panel = document.getElementById('insight-panel');
+    document.getElementById('insight-title').textContent = `${a.icon} ${a.name}`;
+    const body = document.getElementById('insight-body');
+    if (a.unlocked) {
+      body.innerHTML = `
+        <div style="display:flex;align-items:center;gap:8px;margin-bottom:14px">
+          <div style="font-family:'Fraunces',serif;font-weight:900;font-size:28px;color:${a.color}">${a.score}</div>
+          <div style="font-size:12px;color:var(--muted);line-height:1.4">Current score<br><span style="color:${a.color}">↑ trend improving</span></div>
+        </div>
+        <div class="insight-section">
+          <div class="insight-section-title"><span style="color:var(--teal)">▲</span> Strengths</div>
+          <div class="insight-text">${a.strengths}</div>
+        </div>
+        <div class="insight-section">
+          <div class="insight-section-title"><span style="color:var(--rose)">▼</span> Areas to develop</div>
+          <div class="insight-text">${a.weaknesses}</div>
+        </div>`;
+    } else {
+      const needed = UNLOCK_TOTAL - unlockPoints;
+      body.innerHTML = `<div class="insight-locked">
+        <div class="insight-locked-icon">🔒</div>
+        <div class="insight-locked-text">The written breakdown for <strong>${a.name}</strong> is not yet unlocked.</div>
+        <div class="insight-locked-label">${needed} more point${needed!==1?'s':''} needed</div>
+      </div>`;
+    }
+    const grid = document.getElementById('attr-grid');
+    grid.parentNode.insertBefore(panel, grid);
+    panel.classList.add('open');
+    panel.scrollIntoView({behavior:'smooth',block:'nearest'});
+  }
 
-                {currentPage === 'results' && results && (
-                  <div className="max-w-5xl mx-auto">
-                    <h1 className="text-4xl font-bold text-white mb-8">Assessment Results</h1>
-                    
-                    <div className="grid grid-cols-3 gap-8 mb-8">
-                      {/* FIFA Card */}
-                      <div className="col-span-1">
-                        <div className="relative w-full" style={{
-                          background: 'linear-gradient(135deg, #1a2639 0%, #2d4059 100%)',
-                          borderRadius: '20px',
-                          border: '3px solid #C5A572',
-                          padding: '24px',
-                          boxShadow: '0 20px 60px rgba(0,0,0,0.5)'
-                        }}>
-                          {/* Header */}
-                          <div className="text-center mb-4">
-                            <div className="text-xs text-gray-400 mb-2 uppercase tracking-wider">Mental Ratio</div>
-                            <div className="text-7xl font-black mb-1" style={{ color: '#E91E8C', textShadow: '3px 3px 6px rgba(0,0,0,0.5)' }}>
-                              {getOverallScore(results)}
-                            </div>
-                            <div className="text-sm font-bold text-gray-300 uppercase">Overall</div>
-                          </div>
+  function closeInsight() { document.getElementById('insight-panel').classList.remove('open'); }
 
-                          {/* Avatar */}
-                          <div className="flex justify-center mb-4">
-                            <div className="w-28 h-28 rounded-full flex items-center justify-center" style={{
-                              background: 'linear-gradient(135deg, #E91E8C 0%, #4A9EBD 100%)',
-                              border: '3px solid rgba(255,255,255,0.2)'
-                            }}>
-                              <User className="w-16 h-16 text-white" />
-                            </div>
-                          </div>
+  // ── Navigation ──
+  function showPage(name) {
+    document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+    document.querySelectorAll('.nav-btn').forEach(n=>n.classList.remove('active'));
+    document.getElementById('page-'+name).classList.add('active');
+    document.getElementById('nav-'+name).classList.add('active');
+    document.querySelector('.main').scrollTo(0,0);
+  }
 
-                          {/* Name */}
-                          <div className="text-center mb-6">
-                            <div className="text-2xl font-bold text-white mb-1">{userData.name}</div>
-                            <div className="text-xs text-gray-400 uppercase tracking-wide">Self-Evaluation</div>
-                          </div>
+  // ── History tabs ──
+  function switchHistTab(name, btn) {
+    document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active'));
+    document.querySelectorAll('.hist-section').forEach(s=>s.classList.remove('active'));
+    btn.classList.add('active');
+    document.getElementById('hist-'+name).classList.add('active');
+  }
 
-                          {/* Stats */}
-                          <div className="grid grid-cols-2 gap-2">
-                            {Object.entries(results).map(([category, score]) => (
-                              <div key={category} className="bg-white/5 backdrop-blur-sm rounded-lg p-3 border border-white/10">
-                                <div className="text-xs text-gray-400 uppercase tracking-wide mb-1">{category}</div>
-                                <div className="text-3xl font-bold text-white">{score}</div>
-                              </div>
-                            ))}
-                          </div>
+  // ── Assessment ──
+  const questions = [
+    {attr:'🎯 Focus',color:'var(--focus)',text:'During a high-pressure moment in a game, how often can you maintain concentration without your mind drifting?'},
+    {attr:'🏔️ Resilience',color:'var(--resilience)',text:'After a mistake or poor performance, how quickly do you recover emotionally and refocus?'},
+    {attr:'🧠 Game IQ',color:'var(--gameiq)',text:'How confident are you in reading a situation and making the right decision under time pressure?'},
+    {attr:'👑 Leadership',color:'var(--leadership)',text:'How often do you take the initiative to guide or positively influence teammates in critical moments?'},
+    {attr:'⚔️ Assertiveness',color:'var(--assertive)',text:'How comfortable are you asserting your point of view in a team setting, even when it is unpopular?'},
+    {attr:'🔒 Discipline',color:'var(--discipline)',text:'How consistently do you follow your routines and commitments, even when motivation is low?'},
+  ];
+  const answerLabels = ['Rarely / never','Sometimes','Most of the time','Consistently'];
+  let currentQ=0, answers=new Array(6).fill(null);
 
-                          {/* Footer */}
-                          <div className="mt-6 text-center">
-                            <div className="inline-block px-4 py-1 rounded-full text-xs font-bold uppercase" style={{
-                              background: '#C5A572',
-                              color: '#1a2639'
-                            }}>
-                              1st Edition
-                            </div>
-                          </div>
-                        </div>
-                      </div>
+  function renderQ() {
+    const q = questions[currentQ];
+    document.getElementById('q-attr').textContent = q.attr;
+    document.getElementById('q-attr').style.color = q.color;
+    document.getElementById('q-text').textContent = q.text;
+    document.getElementById('assess-sub').textContent = `Question ${currentQ+1} of ${questions.length}`;
+    document.querySelectorAll('.progress-pip').forEach((p,i)=>p.classList.toggle('done',i<=currentQ));
+    const grid = document.getElementById('answer-grid');
+    grid.innerHTML='';
+    [1,2,3,4].forEach(val=>{
+      const btn = document.createElement('button');
+      btn.className='answer-btn'+(answers[currentQ]===val?' selected':'');
+      btn.innerHTML=`<span class="ans-num">${val}</span><span class="ans-label">${answerLabels[val-1]}</span>`;
+      btn.onclick=()=>selectAnswer(val);
+      grid.appendChild(btn);
+    });
+    document.getElementById('btn-next').disabled=(answers[currentQ]===null);
+    document.getElementById('btn-back').style.display=currentQ>0?'block':'none';
+    document.getElementById('btn-next').textContent=currentQ===questions.length-1?'Submit':'Next →';
+  }
 
-                      {/* Table */}
-                      <div className="col-span-2">
-                        <div className="bg-white/5 backdrop-blur-md rounded-lg border border-brain-pink/20 overflow-hidden">
-                          <div className="p-6" style={{ background: 'linear-gradient(135deg, #E91E8C 0%, #4A9EBD 100%)' }}>
-                            <h2 className="text-2xl font-bold text-white">Detailed Breakdown</h2>
-                          </div>
+  function selectAnswer(val) {
+    answers[currentQ]=val;
+    document.querySelectorAll('.answer-btn').forEach((b,i)=>b.classList.toggle('selected',i+1===val));
+    document.getElementById('btn-next').disabled=false;
+  }
 
-                          <div className="p-6">
-                            <table className="w-full">
-                              <thead>
-                                <tr className="border-b-2 border-white/20">
-                                  <th className="text-left py-4 px-4 font-bold text-gray-300">Category</th>
-                                  <th className="text-center py-4 px-4 font-bold text-gray-300">Score</th>
-                                  <th className="text-left py-4 px-4 font-bold text-gray-300">Performance</th>
-                                </tr>
-                              </thead>
-                              <tbody>
-                                {Object.entries(results).map(([category, score], idx) => (
-                                  <tr key={idx} className="border-b border-white/10 hover:bg-white/5 transition">
-                                    <td className="py-4 px-4">
-                                      <div className="flex items-center gap-3">
-                                        <span className={`${getCategoryColor(category)} text-white px-2 py-1 rounded text-xs font-bold`}>
-                                          {category}
-                                        </span>
-                                        <span className="font-medium text-white">{getCategoryName(category)}</span>
-                                      </div>
-                                    </td>
-                                    <td className="py-4 px-4 text-center">
-                                      <span className="text-3xl font-black text-brain-pink">{score}</span>
-                                    </td>
-                                    <td className="py-4 px-4">
-                                      <div className="flex items-center gap-3">
-                                        <div className="flex-1 bg-white/10 rounded-full h-3">
-                                          <div
-                                            className="h-3 rounded-full transition-all"
-                                            style={{ 
-                                              width: `${score}%`,
-                                              background: 'linear-gradient(90deg, #E91E8C 0%, #4A9EBD 100%)'
-                                            }}
-                                          />
-                                        </div>
-                                      </div>
-                                    </td>
-                                  </tr>
-                                ))}
-                              </tbody>
-                            </table>
-                          </div>
+  function nextQ() { if(currentQ<questions.length-1){currentQ++;renderQ();}else submitAssessment(); }
+  function prevQ() { if(currentQ>0){currentQ--;renderQ();} }
 
-                          <div className="bg-white/5 p-6 border-t border-white/10">
-                            <div className="flex gap-4">
-                              <button
-                                onClick={resetAssessment}
-                                className="flex-1 py-4 rounded-lg font-semibold transition"
-                                style={{ background: 'linear-gradient(135deg, #E91E8C, #4A9EBD)', color: 'white' }}
-                              >
-                                Take Another Assessment
-                              </button>
-                              <button
-                                onClick={() => setCurrentPage('user')}
-                                className="flex-1 bg-white/10 text-white py-4 rounded-lg font-semibold hover:bg-white/20 transition border border-white/20"
-                              >
-                                Back to User
-                              </button>
-                            </div>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                )}
+  function submitAssessment() {
+    const attrNames=['Focus','Resilience','Game IQ','Leadership','Assertiveness','Discipline'];
+    const colors=['var(--focus)','var(--resilience)','var(--gameiq)','var(--leadership)','var(--assertive)','var(--discipline)'];
+    const avg=answers.reduce((a,b)=>a+(b||0),0)/answers.length;
+    const score=Math.round((avg/4)*100);
+    document.getElementById('q-card').style.display='none';
+    document.getElementById('q-nav').style.display='none';
+    document.getElementById('assess-progress').style.display='none';
+    document.getElementById('assess-sub').textContent='Completed';
+    document.getElementById('score-result').textContent=score;
+    document.getElementById('score-breakdown').innerHTML=attrNames.map((n,i)=>{
+      const s=Math.round(((answers[i]||2)/4)*100);
+      return `<div class="score-row"><div class="score-row-label">${n}</div><div class="score-row-bar-bg"><div class="score-row-bar" style="width:${s}%;background:${colors[i]}"></div></div><div class="score-row-val" style="color:${colors[i]}">${s}</div></div>`;
+    }).join('');
+    document.getElementById('score-preview').style.display='flex';
+    unlockPoints=Math.min(unlockPoints+1,UNLOCK_TOTAL);
+    renderUnlockTracks(); renderAttrGrid();
+    showToast('✓ Submitted · +1 unlock point earned');
+  }
 
-                {currentPage === 'external' && (
-                  <div className="max-w-4xl mx-auto">
-                    <div className="bg-yellow-500/10 border-2 border-yellow-500/30 rounded-lg p-6 mb-6 backdrop-blur-md">
-                      <div className="flex items-center gap-3 mb-2">
-                        <Crown className="w-8 h-8 text-yellow-400" />
-                        <h1 className="text-3xl font-bold text-white">External Evaluation</h1>
-                        <span className="bg-yellow-500 text-gray-900 px-3 py-1 rounded-full text-xs font-bold uppercase">Pro Feature</span>
-                      </div>
-                      <p className="text-gray-300 text-lg">This premium feature is currently locked</p>
-                    </div>
+  document.getElementById('nav-assessment').addEventListener('click',()=>{
+    currentQ=0; answers=new Array(6).fill(null);
+    document.getElementById('q-card').style.display='';
+    document.getElementById('q-nav').style.display='';
+    document.getElementById('assess-progress').style.display='';
+    document.getElementById('score-preview').style.display='none';
+    renderQ();
+  });
 
-                    <div className="bg-white/5 backdrop-blur-md rounded-lg border border-brain-pink/20 p-12 text-center">
-                      <Users className="w-20 h-20 text-gray-400 mx-auto mb-6" />
-                      <h2 className="text-2xl font-bold text-white mb-4">Request External Evaluation</h2>
-                      <p className="text-gray-300 text-lg mb-8 max-w-2xl mx-auto">
-                        This is where the user will ask for an external evaluation of their performance. 
-                        Coaches, teammates, or professionals can provide feedback on your mental attributes, 
-                        offering valuable outside perspectives to complement your self-assessment.
-                      </p>
-                      
-                      <div className="bg-brain-pink/10 border border-brain-pink/30 rounded-lg p-6 mb-8 max-w-2xl mx-auto backdrop-blur-sm">
-                        <h3 className="font-bold text-brain-pink mb-3">Pro Features Include:</h3>
-                        <ul className="text-left text-gray-300 space-y-2">
-                          <li className="flex items-start gap-2">
-                            <span className="text-brain-pink font-bold">•</span>
-                            <span>Send evaluation requests to multiple evaluators</span>
-                          </li>
-                          <li className="flex items-start gap-2">
-                            <span className="text-brain-pink font-bold">•</span>
-                            <span>Anonymous feedback option for honest responses</span>
-                          </li>
-                          <li className="flex items-start gap-2">
-                            <span className="text-brain-pink font-bold">•</span>
-                            <span>Compare external evaluations with self-assessment</span>
-                          </li>
-                          <li className="flex items-start gap-2">
-                            <span className="text-brain-pink font-bold">•</span>
-                            <span>Track evaluation trends over time</span>
-                          </li>
-                          <li className="flex items-start gap-2">
-                            <span className="text-brain-pink font-bold">•</span>
-                            <span>Generate comprehensive Mental Ratio reports</span>
-                          </li>
-                        </ul>
-                      </div>
+  // ── Tasks ──
+  function toggleTask(el,e) {
+    e.stopPropagation();
+    const wasDone=el.classList.contains('done');
+    el.classList.toggle('done');
+    el.nextElementSibling.querySelector('.task-title').classList.toggle('done');
+    if(!wasDone){
+      unlockPoints=Math.min(unlockPoints+1,UNLOCK_TOTAL);
+      renderUnlockTracks(); renderAttrGrid();
+      showToast('✓ Task done · +1 unlock point earned');
+    }
+  }
 
-                      <button className="px-8 py-4 rounded-lg font-bold text-lg transition shadow-lg"
-                        style={{ background: 'linear-gradient(135deg, #E91E8C, #4A9EBD)', color: 'white' }}
-                      >
-                        Upgrade to Pro
-                      </button>
-                    </div>
-                  </div>
-                )}
-              </div>
-            </div>
-          );
-        }
+  function filterTasks(attr,chipEl) {
+    document.querySelectorAll('.chip').forEach(c=>c.classList.remove('active'));
+    chipEl.classList.add('active');
+    document.querySelectorAll('.task-item').forEach(item=>{
+      item.style.display=(attr==='all'||item.dataset.attr===attr)?'flex':'none';
+    });
+  }
 
-        ReactDOM.render(<MentalRatioApp />, document.getElementById('root'));
-    </script>
+  // ── Purchase modal ──
+  function openPurchaseModal()  { document.getElementById('modal-overlay').classList.add('open'); }
+  function closePurchaseModal() { document.getElementById('modal-overlay').classList.remove('open'); }
+  function confirmPurchase() {
+    closePurchaseModal();
+    showToast('✓ Request submitted · you will be notified shortly');
+  }
+
+  // ── Toast ──
+  function showToast(msg) {
+    const t=document.getElementById('toast');
+    t.textContent=msg; t.classList.add('show');
+    setTimeout(()=>t.classList.remove('show'),2800);
+  }
+
+  // ── Init ──
+  renderUnlockTracks();
+  renderAttrGrid();
+  renderQ();
+</script>
 </body>
 </html>
