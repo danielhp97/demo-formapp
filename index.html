@@ -2,296 +2,14 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 <title>Mental Ratio</title>
-<link href="https://fonts.googleapis.com/css2?family=Fraunces:wght@400;600;700;900&family=Karla:wght@300;400;500;600&display=swap" rel="stylesheet">
-<style>
-  :root {
-    --bg:#f5f0eb; --surface:#faf7f4; --surface2:#eee8e0;
-    --border:rgba(80,60,40,0.10); --text:#2a2118; --muted:#8a7d6e; --muted2:#b5a899;
-    --focus:#7e6fa0; --resilience:#3d8b7a; --gameiq:#6b9e78;
-    --leadership:#b09070; --assertive:#c47a7a; --discipline:#b5623e;
-    --accent:#b5623e; --teal:#3d8b7a; --rose:#c47a7a; --sand:#b09070;
-    --radius:14px; --sidebar:64px;
-  }
-  *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
-  body{font-family:'Karla',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;display:flex;overflow:hidden;}
-
-  /* SIDEBAR */
-  .sidebar{width:var(--sidebar);background:var(--surface);border-right:1px solid var(--border);display:flex;flex-direction:column;align-items:center;padding:18px 0 22px;position:fixed;top:0;left:0;bottom:0;z-index:100;gap:6px;}
-  .logo-mark{font-family:'Fraunces',serif;font-weight:900;font-size:17px;color:var(--accent);margin-bottom:20px;}
-  .nav-btn{width:42px;height:42px;border-radius:11px;display:flex;align-items:center;justify-content:center;cursor:pointer;color:var(--muted);border:none;background:none;transition:all 0.18s;position:relative;}
-  .nav-btn svg{width:19px;height:19px;stroke-width:1.8;}
-  .nav-btn:hover{background:var(--surface2);color:var(--text);}
-  .nav-btn.active{background:var(--accent);color:#fff;}
-  .nav-tip{position:absolute;left:52px;background:var(--text);color:var(--surface);font-size:11px;font-family:'Karla',sans-serif;padding:5px 9px;border-radius:7px;white-space:nowrap;opacity:0;pointer-events:none;transition:opacity 0.15s;z-index:200;}
-  .nav-btn:hover .nav-tip{opacity:1;}
-  .sidebar-foot{margin-top:auto;display:flex;flex-direction:column;align-items:center;gap:8px;}
-  .avatar{width:34px;height:34px;border-radius:50%;background:linear-gradient(135deg,var(--rose),var(--sand));display:flex;align-items:center;justify-content:center;font-family:'Fraunces',serif;font-weight:700;font-size:12px;color:#fff;cursor:pointer;}
-
-  /* MAIN */
-  .main{margin-left:var(--sidebar);flex:1;overflow-y:auto;height:100vh;}
-  .main::-webkit-scrollbar{width:3px;}
-  .main::-webkit-scrollbar-thumb{background:var(--surface2);border-radius:2px;}
-
-  /* PAGES */
-  .page{display:none;padding:26px 22px 80px;max-width:500px;}
-  .page.active{display:block;animation:fadeUp 0.28s ease;}
-  @keyframes fadeUp{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
-
-  /* TYPE */
-  .page-title{font-family:'Fraunces',serif;font-weight:700;font-size:22px;line-height:1.2;}
-  .page-sub{font-size:13px;color:var(--muted);margin-top:3px;}
-  .section-label{font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:1.6px;color:var(--muted2);margin:20px 0 10px;}
-
-  /* TOPBAR */
-  .topbar{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:22px;}
-  .notif-btn{width:36px;height:36px;border-radius:10px;background:var(--surface);border:1px solid var(--border);display:flex;align-items:center;justify-content:center;cursor:pointer;color:var(--muted);flex-shrink:0;margin-top:2px;position:relative;}
-  .notif-dot{width:6px;height:6px;background:var(--rose);border-radius:50%;position:absolute;top:8px;right:8px;}
-
-  /* CARD */
-  .card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:18px;margin-bottom:12px;}
-
-  /* RATIO HERO */
-  .ratio-hero{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:22px;margin-bottom:12px;display:flex;align-items:center;gap:18px;}
-  .ratio-ring{position:relative;width:84px;height:84px;flex-shrink:0;}
-  .ratio-ring svg{transform:rotate(-90deg);}
-  .ratio-ring-label{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;}
-  .ratio-number{font-family:'Fraunces',serif;font-weight:900;font-size:24px;color:var(--accent);line-height:1;}
-  .ratio-denom{font-size:10px;color:var(--muted2);}
-  .ratio-info h3{font-family:'Fraunces',serif;font-weight:700;font-size:16px;margin-bottom:5px;}
-  .ratio-info p{font-size:12px;color:var(--muted);line-height:1.5;}
-  .ratio-badge{display:inline-flex;align-items:center;gap:4px;margin-top:8px;padding:3px 10px;background:rgba(181,98,62,0.1);border:1px solid rgba(181,98,62,0.2);border-radius:20px;font-size:11px;color:var(--accent);font-weight:600;}
-
-  /* UNLOCK */
-  .unlock-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:18px;margin-bottom:12px;}
-  .unlock-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:6px;}
-  .unlock-title{font-family:'Fraunces',serif;font-weight:700;font-size:14px;}
-  .unlock-level{font-size:11px;font-weight:600;padding:3px 9px;border-radius:20px;border:1px solid var(--border);background:var(--surface2);color:var(--muted);}
-  .unlock-level.active{background:rgba(181,98,62,0.1);border-color:rgba(181,98,62,0.25);color:var(--accent);}
-  .unlock-desc{font-size:12px;color:var(--muted);line-height:1.55;margin-bottom:12px;}
-  .unlock-track{display:flex;gap:4px;margin-bottom:8px;}
-  .unlock-pip{flex:1;height:5px;border-radius:3px;background:var(--surface2);transition:background 0.3s;}
-  .unlock-pip.filled{background:var(--accent);}
-  .unlock-track-label{font-size:10px;color:var(--muted2);font-weight:600;}
-  .unlock-tiers{display:flex;gap:8px;margin-top:12px;}
-  .tier-badge{flex:1;padding:10px 8px;border-radius:10px;border:1.5px solid var(--border);background:var(--bg);text-align:center;}
-  .tier-badge.unlocked{border-color:rgba(181,98,62,0.3);background:rgba(181,98,62,0.05);}
-  .tier-badge.current{border-color:var(--accent);background:rgba(181,98,62,0.08);}
-  .tier-icon{font-size:16px;display:block;margin-bottom:4px;}
-  .tier-name{font-size:10px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:0.8px;}
-  .tier-badge.unlocked .tier-name,.tier-badge.current .tier-name{color:var(--accent);}
-
-  /* ATTRS */
-  .attr-grid{display:grid;grid-template-columns:1fr 1fr;gap:9px;margin-bottom:12px;}
-  .attr-card{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:14px;cursor:pointer;transition:border-color 0.18s;}
-  .attr-card:hover{border-color:rgba(80,60,40,0.2);}
-  .attr-icon{font-size:16px;margin-bottom:8px;display:block;}
-  .attr-name{font-size:11px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:0.8px;margin-bottom:4px;}
-  .attr-score{font-family:'Fraunces',serif;font-weight:700;font-size:20px;line-height:1;}
-  .attr-bar-bg{height:3px;background:var(--surface2);border-radius:2px;margin-top:8px;overflow:hidden;}
-  .attr-bar{height:100%;border-radius:2px;}
-  .attr-locked{display:flex;align-items:center;gap:6px;margin-top:6px;}
-  .attr-locked-label{font-size:11px;color:var(--muted2);}
-
-  /* INSIGHT */
-  .insight-panel{display:none;background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:20px;margin-bottom:12px;animation:fadeUp 0.22s ease;}
-  .insight-panel.open{display:block;}
-  .insight-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:14px;}
-  .insight-title{font-family:'Fraunces',serif;font-weight:700;font-size:15px;}
-  .insight-close{font-size:13px;color:var(--muted);cursor:pointer;padding:4px 8px;border-radius:6px;background:var(--surface2);border:none;font-family:'Karla',sans-serif;}
-  .insight-section{margin-bottom:14px;}
-  .insight-section-title{font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:1px;color:var(--muted2);margin-bottom:6px;display:flex;align-items:center;gap:5px;}
-  .insight-text{font-size:13px;color:var(--text);line-height:1.6;}
-  .insight-locked{display:flex;flex-direction:column;align-items:center;justify-content:center;padding:20px;text-align:center;gap:8px;}
-  .insight-locked-icon{font-size:26px;}
-  .insight-locked-text{font-size:13px;color:var(--muted);line-height:1.5;}
-  .insight-locked-label{font-size:11px;font-weight:600;color:var(--accent);}
-
-  /* ACTIVITY */
-  .act-item{display:flex;align-items:center;gap:12px;padding:11px 0;border-bottom:1px solid var(--border);}
-  .act-item:last-child{border-bottom:none;padding-bottom:0;}
-  .act-dot{width:7px;height:7px;border-radius:50%;flex-shrink:0;}
-  .act-text{font-size:13px;flex:1;}
-  .act-text span{color:var(--muted);}
-  .act-time{font-size:11px;color:var(--muted2);}
-
-  /* ASSESSMENT */
-  .assess-progress{display:flex;gap:4px;margin-bottom:20px;}
-  .progress-pip{flex:1;height:3px;border-radius:2px;background:var(--surface2);transition:background 0.3s;}
-  .progress-pip.done{background:var(--accent);}
-  .q-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:22px;margin-bottom:12px;}
-  .q-attr-label{font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:1.4px;margin-bottom:10px;}
-  .q-text{font-family:'Fraunces',serif;font-weight:600;font-size:16px;line-height:1.45;margin-bottom:20px;}
-  .answer-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;}
-  .answer-btn{padding:12px 10px;border-radius:10px;border:1.5px solid var(--border);background:var(--bg);cursor:pointer;text-align:left;transition:all 0.18s;font-family:'Karla',sans-serif;}
-  .answer-btn .ans-num{font-family:'Fraunces',serif;font-weight:700;font-size:18px;display:block;margin-bottom:3px;}
-  .answer-btn .ans-label{font-size:11px;color:var(--muted);display:block;}
-  .answer-btn:hover{border-color:var(--accent);background:rgba(181,98,62,0.05);}
-  .answer-btn.selected{border-color:var(--accent);background:rgba(181,98,62,0.08);}
-  .answer-btn.selected .ans-num{color:var(--accent);}
-  .q-nav{display:flex;gap:10px;margin-top:14px;}
-  .btn-secondary{flex:1;padding:13px;border-radius:11px;border:1.5px solid var(--border);background:none;font-family:'Karla',sans-serif;font-weight:600;font-size:14px;color:var(--muted);cursor:pointer;transition:all 0.18s;}
-  .btn-secondary:hover{background:var(--surface2);color:var(--text);}
-  .btn-primary{flex:2;padding:13px;border-radius:11px;border:none;background:var(--accent);font-family:'Karla',sans-serif;font-weight:600;font-size:14px;color:#fff;cursor:pointer;transition:all 0.18s;}
-  .btn-primary:hover{opacity:0.9;transform:translateY(-1px);}
-  .btn-primary:disabled{opacity:0.4;cursor:default;transform:none;}
-  .score-preview{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:20px;margin-bottom:12px;display:none;flex-direction:column;gap:14px;}
-  .score-preview-top{display:flex;align-items:center;gap:16px;}
-  .score-num{font-family:'Fraunces',serif;font-weight:900;font-size:40px;color:var(--accent);flex-shrink:0;}
-  .score-info-text{font-size:12px;color:var(--muted);line-height:1.6;}
-  .score-breakdown{display:flex;flex-direction:column;gap:8px;}
-  .score-row{display:flex;align-items:center;gap:10px;}
-  .score-row-label{font-size:12px;color:var(--muted);width:90px;flex-shrink:0;}
-  .score-row-bar-bg{flex:1;height:4px;background:var(--surface2);border-radius:2px;overflow:hidden;}
-  .score-row-bar{height:100%;border-radius:2px;}
-  .score-row-val{font-family:'Fraunces',serif;font-weight:700;font-size:13px;width:20px;text-align:right;flex-shrink:0;}
-
-  /* TASKS */
-  .filter-row{display:flex;gap:7px;margin-bottom:14px;overflow-x:auto;padding-bottom:2px;}
-  .filter-row::-webkit-scrollbar{display:none;}
-  .chip{padding:5px 13px;border-radius:20px;border:1.5px solid var(--border);background:var(--surface);font-size:12px;font-weight:600;color:var(--muted);cursor:pointer;white-space:nowrap;transition:all 0.18s;}
-  .chip.active{background:var(--accent);border-color:var(--accent);color:#fff;}
-  .task-item{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:14px 16px;margin-bottom:8px;display:flex;align-items:flex-start;gap:12px;transition:border-color 0.18s;}
-  .task-item.personalised{border-color:rgba(61,139,122,0.3);background:rgba(61,139,122,0.03);}
-  .task-item:hover{border-color:rgba(80,60,40,0.2);}
-  .task-check{width:20px;height:20px;border-radius:50%;border:2px solid var(--border);flex-shrink:0;margin-top:2px;display:flex;align-items:center;justify-content:center;cursor:pointer;transition:all 0.18s;}
-  .task-check.done{background:var(--teal);border-color:var(--teal);}
-  .task-check.done::after{content:'';width:5px;height:5px;background:#fff;border-radius:50%;}
-  .task-body{flex:1;min-width:0;}
-  .task-title{font-size:13px;font-weight:500;margin-bottom:5px;line-height:1.4;}
-  .task-title.done{text-decoration:line-through;color:var(--muted2);}
-  .task-meta{display:flex;align-items:center;gap:7px;flex-wrap:wrap;}
-  .t-tag{font-size:10px;font-weight:600;padding:2px 8px;border-radius:20px;text-transform:uppercase;letter-spacing:0.5px;}
-  .tag-focus{background:rgba(126,111,160,0.12);color:var(--focus);}
-  .tag-resilience{background:rgba(61,139,122,0.12);color:var(--teal);}
-  .tag-leadership{background:rgba(176,144,112,0.12);color:var(--sand);}
-  .tag-discipline{background:rgba(181,98,62,0.12);color:var(--discipline);}
-  .tag-assertive{background:rgba(196,122,122,0.12);color:var(--rose);}
-  .tag-gameiq{background:rgba(107,158,120,0.12);color:var(--gameiq);}
-  .tag-personalised{background:rgba(61,139,122,0.12);color:var(--teal);font-size:9px;letter-spacing:0.5px;}
-  .task-type{font-size:11px;color:var(--muted2);}
-  .task-pts{font-size:11px;color:var(--accent);font-weight:600;margin-left:auto;}
-  .pts-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:16px 18px;margin-bottom:12px;display:flex;align-items:center;gap:14px;}
-  .pts-icon{width:38px;height:38px;border-radius:10px;background:rgba(181,98,62,0.1);display:flex;align-items:center;justify-content:center;font-size:17px;flex-shrink:0;}
-  .pts-info{flex:1;}
-  .pts-label{font-size:10px;color:var(--muted2);text-transform:uppercase;letter-spacing:1px;margin-bottom:3px;}
-  .pts-val{font-family:'Fraunces',serif;font-weight:700;font-size:20px;color:var(--accent);}
-  .pts-bar-bg{height:4px;background:var(--surface2);border-radius:2px;margin-top:7px;overflow:hidden;}
-  .pts-bar{height:100%;border-radius:2px;background:linear-gradient(90deg,var(--discipline),var(--rose));width:62%;}
-
-  /* ── OUTSIDER EVAL ── */
-  .premium-hero{
-    background:linear-gradient(135deg,rgba(176,144,112,0.12),rgba(126,111,160,0.10));
-    border:1px solid rgba(176,144,112,0.25);
-    border-radius:var(--radius);padding:22px;margin-bottom:16px;
-  }
-  .premium-hero-top{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:10px;}
-  .premium-hero-title{font-family:'Fraunces',serif;font-weight:700;font-size:18px;}
-  .premium-badge{background:var(--sand);color:#fff;font-size:10px;font-weight:700;padding:3px 9px;border-radius:20px;letter-spacing:0.8px;text-transform:uppercase;}
-  .premium-hero p{font-size:13px;color:var(--muted);line-height:1.6;margin-bottom:16px;}
-  .price-row{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;}
-  .price-val{font-family:'Fraunces',serif;font-weight:900;font-size:28px;color:var(--text);}
-  .price-note{font-size:12px;color:var(--muted);text-align:right;line-height:1.4;}
-  .btn-purchase{width:100%;padding:14px;border-radius:12px;border:none;background:var(--accent);font-family:'Karla',sans-serif;font-weight:700;font-size:15px;color:#fff;cursor:pointer;transition:all 0.2s;}
-  .btn-purchase:hover{opacity:0.9;transform:translateY(-1px);}
-
-  /* tracker */
-  .tracker{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:20px;margin-bottom:12px;}
-  .tracker-title{font-family:'Fraunces',serif;font-weight:700;font-size:14px;margin-bottom:16px;}
-
-  .tracker-steps{display:flex;flex-direction:column;gap:0;}
-  .tracker-step{display:flex;gap:14px;align-items:flex-start;position:relative;}
-  .tracker-step:not(:last-child)::after{content:'';position:absolute;left:13px;top:28px;width:2px;bottom:-16px;background:var(--surface2);}
-  .tracker-step.done::after{background:var(--teal);}
-
-  .step-dot{width:28px;height:28px;border-radius:50%;border:2px solid var(--border);background:var(--bg);display:flex;align-items:center;justify-content:center;font-size:12px;flex-shrink:0;z-index:1;}
-  .step-dot.done{background:var(--teal);border-color:var(--teal);color:#fff;}
-  .step-dot.active{background:var(--accent);border-color:var(--accent);color:#fff;}
-  .step-dot.pending{background:var(--bg);border-color:var(--border);color:var(--muted2);}
-
-  .step-body{padding-bottom:20px;flex:1;}
-  .step-label{font-size:13px;font-weight:600;margin-bottom:2px;}
-  .step-label.done{color:var(--teal);}
-  .step-label.active{color:var(--accent);}
-  .step-label.pending{color:var(--muted2);}
-  .step-desc{font-size:12px;color:var(--muted);line-height:1.5;}
-  .step-date{font-size:11px;color:var(--muted2);margin-top:3px;}
-
-  .past-evals{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:18px;margin-bottom:12px;}
-  .past-eval-item{display:flex;align-items:center;gap:12px;padding:11px 0;border-bottom:1px solid var(--border);cursor:pointer;}
-  .past-eval-item:last-child{border-bottom:none;padding-bottom:0;}
-  .eval-score-badge{width:38px;height:38px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-family:'Fraunces',serif;font-weight:700;font-size:14px;flex-shrink:0;}
-  .past-eval-info{flex:1;}
-  .past-eval-label{font-size:13px;font-weight:500;margin-bottom:2px;}
-  .past-eval-meta{font-size:11px;color:var(--muted2);}
-  .eval-status{font-size:10px;font-weight:700;padding:3px 9px;border-radius:20px;text-transform:uppercase;letter-spacing:0.5px;}
-  .status-completed{background:rgba(61,139,122,0.12);color:var(--teal);}
-  .status-review{background:rgba(181,98,62,0.12);color:var(--accent);}
-
-  /* ── HISTORY ── */
-  .tab-row{display:flex;gap:0;margin-bottom:20px;background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:3px;}
-  .tab-btn{flex:1;padding:8px;border-radius:8px;border:none;background:none;font-family:'Karla',sans-serif;font-weight:600;font-size:12px;color:var(--muted);cursor:pointer;transition:all 0.18s;}
-  .tab-btn.active{background:var(--accent);color:#fff;}
-
-  .hist-section{display:none;}
-  .hist-section.active{display:block;}
-
-  /* SVG Chart */
-  .chart-wrap{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:18px;margin-bottom:12px;overflow:hidden;}
-  .chart-title{font-family:'Fraunces',serif;font-weight:700;font-size:14px;margin-bottom:4px;}
-  .chart-sub{font-size:12px;color:var(--muted);margin-bottom:16px;}
-  svg.chart{width:100%;overflow:visible;}
-
-  .chart-legend{display:flex;flex-wrap:wrap;gap:10px;margin-top:14px;}
-  .legend-item{display:flex;align-items:center;gap:5px;font-size:11px;color:var(--muted);}
-  .legend-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0;}
-
-  /* timeline axis labels */
-  .axis-label{font-size:9px;fill:var(--muted2);font-family:'Karla',sans-serif;}
-
-  /* History list */
-  .hist-item{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:16px;margin-bottom:10px;}
-  .hist-item-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;}
-  .hist-item-date{font-size:12px;color:var(--muted);}
-  .hist-item-score{font-family:'Fraunces',serif;font-weight:700;font-size:22px;color:var(--accent);}
-  .hist-mini-bars{display:flex;flex-direction:column;gap:5px;}
-  .hist-mini-row{display:flex;align-items:center;gap:8px;}
-  .hist-mini-label{font-size:10px;color:var(--muted);width:76px;flex-shrink:0;}
-  .hist-mini-bg{flex:1;height:3px;background:var(--surface2);border-radius:2px;overflow:hidden;}
-  .hist-mini-bar{height:100%;border-radius:2px;}
-  .hist-mini-val{font-size:10px;font-weight:600;width:22px;text-align:right;flex-shrink:0;}
-
-  /* Points history */
-  .pts-hist-item{display:flex;align-items:center;gap:12px;padding:10px 0;border-bottom:1px solid var(--border);}
-  .pts-hist-item:last-child{border-bottom:none;}
-  .pts-hist-icon{width:32px;height:32px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:14px;flex-shrink:0;}
-  .pts-hist-info{flex:1;}
-  .pts-hist-label{font-size:13px;font-weight:500;}
-  .pts-hist-date{font-size:11px;color:var(--muted2);}
-  .pts-hist-val{font-family:'Fraunces',serif;font-weight:700;font-size:15px;color:var(--accent);}
-
-  /* TOAST */
-  .toast{position:fixed;bottom:22px;left:50%;transform:translateX(-50%) translateY(80px);background:var(--text);border-radius:10px;padding:11px 18px;font-size:13px;font-weight:500;color:var(--surface);z-index:999;transition:transform 0.3s ease;white-space:nowrap;}
-  .toast.show{transform:translateX(-50%) translateY(0);}
-
-  /* MODAL */
-  .modal-overlay{position:fixed;inset:0;background:rgba(42,33,24,0.5);z-index:500;display:none;align-items:flex-end;justify-content:center;}
-  .modal-overlay.open{display:flex;animation:fadeUp 0.25s ease;}
-  .modal{background:var(--surface);border-radius:20px 20px 0 0;padding:28px 22px 40px;width:100%;max-width:500px;}
-  .modal-title{font-family:'Fraunces',serif;font-weight:700;font-size:18px;margin-bottom:6px;}
-  .modal-desc{font-size:13px;color:var(--muted);line-height:1.6;margin-bottom:20px;}
-  .modal-price-row{display:flex;align-items:baseline;gap:6px;margin-bottom:20px;}
-  .modal-price{font-family:'Fraunces',serif;font-weight:900;font-size:36px;color:var(--text);}
-  .modal-price-note{font-size:13px;color:var(--muted);}
-  .modal-btn{width:100%;padding:15px;border-radius:12px;border:none;background:var(--accent);font-family:'Karla',sans-serif;font-weight:700;font-size:15px;color:#fff;cursor:pointer;margin-bottom:10px;transition:all 0.2s;}
-  .modal-btn:hover{opacity:0.9;}
-  .modal-cancel{width:100%;padding:12px;border-radius:12px;border:1.5px solid var(--border);background:none;font-family:'Karla',sans-serif;font-weight:600;font-size:14px;color:var(--muted);cursor:pointer;}
-</style>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,600;9..144,700;9..144,900&family=Karla:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/styles.css">
 </head>
 <body>
 
-<!-- SIDEBAR -->
+<!-- ═══ SIDEBAR ═══ -->
 <nav class="sidebar">
   <div class="logo-mark">MR</div>
   <button class="nav-btn active" onclick="showPage('dashboard')" id="nav-dashboard">
@@ -306,16 +24,28 @@
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
     <span class="nav-tip">Tasks</span>
   </button>
-  <button class="nav-btn" onclick="showPage('history')" id="nav-history">
+  <button class="nav-btn" onclick="showPage('history-assessments')" id="nav-history-assessments">
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
-    <span class="nav-tip">History</span>
+    <span class="nav-tip">Assessment History</span>
+  </button>
+  <button class="nav-btn" onclick="showPage('history-tasks')" id="nav-history-tasks">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="3" y1="9" x2="21" y2="9"/><polyline points="7 13 9 15 13 11"/></svg>
+    <span class="nav-tip">Task History</span>
   </button>
   <button class="nav-btn" onclick="showPage('evaluation')" id="nav-evaluation">
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87"/><path d="M16 3.13a4 4 0 010 7.75"/></svg>
-    <span class="nav-tip">Evaluation</span>
+    <span class="nav-tip">Outsider Evaluation</span>
   </button>
   <div class="sidebar-foot">
-    <div class="avatar">JS</div>
+    <button class="nav-btn" onclick="showPage('contact')" id="nav-contact">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg>
+      <span class="nav-tip">Contact</span>
+    </button>
+    <button class="nav-btn" onclick="showPage('settings')" id="nav-settings">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 010 2.83 2 2 0 01-2.83 0l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-4 0v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 01-2.83-2.83l.06-.06A1.65 1.65 0 004.68 15a1.65 1.65 0 00-1.51-1H3a2 2 0 010-4h.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 012.83-2.83l.06.06A1.65 1.65 0 009 4.68a1.65 1.65 0 001-1.51V3a2 2 0 014 0v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 012.83 2.83l-.06.06A1.65 1.65 0 0019.4 9a1.65 1.65 0 001.51 1H21a2 2 0 010 4h-.09a1.65 1.65 0 00-1.51 1z"/></svg>
+      <span class="nav-tip">Settings</span>
+    </button>
+    <div class="avatar" onclick="showPage('settings')">V</div>
   </div>
 </nav>
 
@@ -324,75 +54,71 @@
   <!-- ════ DASHBOARD ════ -->
   <div class="page active" id="page-dashboard">
     <div class="topbar">
-      <div><div class="page-title">Morning, João</div><div class="page-sub">Monday, 17 Feb 2026</div></div>
-      <div class="notif-btn"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M18 8A6 6 0 006 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 01-3.46 0"/></svg><div class="notif-dot"></div></div>
+      <div><div class="page-title">Morning, Vital</div><div class="page-sub">Season 2025/26</div></div>
+      <div class="notif-btn" onclick="openNotifPanel()"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M18 8A6 6 0 006 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 01-3.46 0"/></svg><div class="notif-dot" id="notif-dot"></div></div>
     </div>
-    <div class="ratio-hero">
-      <div class="ratio-ring">
-        <svg width="84" height="84" viewBox="0 0 84 84">
-          <circle cx="42" cy="42" r="34" fill="none" stroke="#eee8e0" stroke-width="6"/>
-          <circle cx="42" cy="42" r="34" fill="none" stroke="#b5623e" stroke-width="6" stroke-dasharray="213.6" stroke-dashoffset="64" stroke-linecap="round"/>
-        </svg>
-        <div class="ratio-ring-label"><div class="ratio-number">72</div><div class="ratio-denom">/100</div></div>
-      </div>
-      <div class="ratio-info">
-        <h3>Mental Ratio Score</h3>
-        <p>Weighted average of your 6 mental performance attributes</p>
-        <div class="ratio-badge">↑ +4 from last assessment</div>
-      </div>
-    </div>
+
+    <div class="ratio-hero" id="ratio-hero"></div>
+
     <div class="unlock-card">
-      <div class="unlock-header"><div class="unlock-title">Insights Progress</div><div class="unlock-level active">Level 1 — Explorer</div></div>
+      <div class="unlock-header"><div class="unlock-title">Insights Progress</div><div class="unlock-level active" id="dash-level-badge"></div></div>
       <p class="unlock-desc">Complete tasks and assessments to unlock written breakdowns of each mental attribute.</p>
       <div class="unlock-track" id="dash-unlock-track"></div>
       <div class="unlock-track-label" id="dash-unlock-label"></div>
       <div class="unlock-tiers">
-        <div class="tier-badge unlocked"><span class="tier-icon">🌱</span><div class="tier-name">Explorer</div></div>
-        <div class="tier-badge current"><span class="tier-icon">🔍</span><div class="tier-name">Analyst</div></div>
-        <div class="tier-badge"><span class="tier-icon">🧬</span><div class="tier-name">Specialist</div></div>
-        <div class="tier-badge"><span class="tier-icon">🏆</span><div class="tier-name">Elite</div></div>
+        <div class="tier-badge" id="tier-0"><span class="tier-icon">🌱</span><div class="tier-name">Explorer</div></div>
+        <div class="tier-badge" id="tier-1"><span class="tier-icon">🔍</span><div class="tier-name">Analyst</div></div>
+        <div class="tier-badge" id="tier-2"><span class="tier-icon">🧬</span><div class="tier-name">Specialist</div></div>
+        <div class="tier-badge" id="tier-3"><span class="tier-icon">🏆</span><div class="tier-name">Elite</div></div>
       </div>
     </div>
+
     <div class="section-label">Mental Attributes — tap to explore</div>
     <div class="insight-panel" id="insight-panel">
       <div class="insight-header"><div class="insight-title" id="insight-title"></div><button class="insight-close" onclick="closeInsight()">✕ Close</button></div>
       <div id="insight-body"></div>
     </div>
     <div class="attr-grid" id="attr-grid"></div>
+
     <div class="section-label">Recent Activity</div>
     <div class="card" style="padding:14px 18px">
-      <div class="act-item"><div class="act-dot" style="background:var(--teal)"></div><div class="act-text">Completed <strong>Breathing exercise</strong> <span>· Focus</span></div><div class="act-time">2h ago</div></div>
-      <div class="act-item"><div class="act-dot" style="background:var(--accent)"></div><div class="act-text">Self-Assessment <span>submitted · +1 unlock point</span></div><div class="act-time">3d ago</div></div>
-      <div class="act-item"><div class="act-dot" style="background:var(--sand)"></div><div class="act-text">Tasks personalised <span>toward Resilience & Leadership</span></div><div class="act-time">3d ago</div></div>
+      <div class="act-item"><div class="act-dot" style="background:var(--teal)"></div><div class="act-text">Completed <strong>Pre-game breathing</strong> <span>· Focus</span></div><div class="act-time">2d ago</div></div>
+      <div class="act-item"><div class="act-dot" style="background:var(--accent)"></div><div class="act-text">Self-Assessment <span>submitted · Session 6</span></div><div class="act-time">15 Feb</div></div>
+      <div class="act-item"><div class="act-dot" style="background:var(--sand)"></div><div class="act-text">Tasks personalised <span>toward Influence & Focus</span></div><div class="act-time">15 Feb</div></div>
     </div>
+
     <div class="card" style="display:flex;align-items:center;gap:14px;cursor:pointer;padding:16px 18px" onclick="showPage('assessment')">
       <div style="width:38px;height:38px;border-radius:10px;background:rgba(181,98,62,0.1);display:flex;align-items:center;justify-content:center;font-size:17px;flex-shrink:0">📋</div>
-      <div style="flex:1"><div style="font-size:13px;font-weight:600;margin-bottom:2px">New Self-Assessment available</div><div style="font-size:12px;color:var(--muted)">Earns 1 unlock point · ~5 minutes</div></div>
+      <div style="flex:1"><div style="font-size:13px;font-weight:600;margin-bottom:2px">Take Self-Assessment</div><div style="font-size:12px;color:var(--muted)">24 questions · ~12 min · earns +20 season pts</div></div>
       <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--muted2)" stroke-width="2"><path d="M9 18l6-6-6-6"/></svg>
     </div>
-    <div style="display:flex;align-items:center;gap:12px;padding:14px 16px;background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);margin-bottom:12px;cursor:pointer">
-      <span style="font-size:18px;flex-shrink:0">💬</span>
-      <div style="flex:1"><div style="font-size:13px;font-weight:600;margin-bottom:2px">Have a question?</div><div style="font-size:12px;color:var(--muted)">Reach out to us anytime — we're here to help.</div></div>
-      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--muted2)" stroke-width="2"><path d="M9 18l6-6-6-6"/></svg>
+
+    <div class="multiplier-hint" onclick="showToast('Coming soon — 2x season points multiplier')">
+      <div class="multiplier-icon">⚡</div>
+      <div class="multiplier-text">Unlock insights faster with <strong>2x Season Points</strong>. One-time purchase per season.</div>
     </div>
   </div>
 
-  <!-- ════ ASSESSMENT ════ -->
+  <!-- ════ SELF-ASSESSMENT ════ -->
   <div class="page" id="page-assessment">
-    <div class="topbar"><div><div class="page-title">Self-Assessment</div><div class="page-sub" id="assess-sub">Question 1 of 6</div></div></div>
-    <div class="assess-progress" id="assess-progress">
-      <div class="progress-pip done"></div><div class="progress-pip"></div><div class="progress-pip"></div>
-      <div class="progress-pip"></div><div class="progress-pip"></div><div class="progress-pip"></div>
-    </div>
+    <div class="topbar"><div><div class="page-title">Self-Assessment</div><div class="page-sub" id="assess-sub">Question 1 of 24</div></div></div>
+    <div class="assess-progress" id="assess-progress"></div>
     <div class="score-preview" id="score-preview">
       <div class="score-preview-top">
         <div class="score-num" id="score-result">—</div>
-        <div class="score-info-text">Your Mental Ratio score for this session. Stored internally and visible to your specialist. Each submission earns <strong>1 unlock point</strong>.</div>
+        <div class="score-info-text">Your Mental Ratio score. Stored internally and visible to your specialist. Earns <strong>+20 season points</strong>.</div>
       </div>
       <div class="score-breakdown" id="score-breakdown"></div>
     </div>
+    <div class="profile-card-wrap" id="profile-card-wrap">
+      <div class="profile-card" id="profile-card"></div>
+      <div class="share-row">
+        <button class="share-btn" onclick="shareCard()">📤 Share</button>
+        <button class="share-btn" onclick="showToast('Image download coming soon')">💾 Download</button>
+      </div>
+    </div>
     <div class="q-card" id="q-card">
-      <div class="q-attr-label" id="q-attr" style="display:none"></div>
+      <div class="q-attr-label" id="q-attr"></div>
       <div class="q-text" id="q-text"></div>
       <div class="answer-grid" id="answer-grid"></div>
     </div>
@@ -404,296 +130,144 @@
 
   <!-- ════ TASKS ════ -->
   <div class="page" id="page-tasks">
-    <div class="topbar"><div><div class="page-title">Tasks</div><div class="page-sub">Personalised to your profile · 3 pending</div></div></div>
-    <div class="pts-card">
-      <div class="pts-icon">⚡</div>
-      <div class="pts-info"><div class="pts-label">Season Points</div><div class="pts-val">620 pts</div><div class="pts-bar-bg"><div class="pts-bar"></div></div></div>
-      <div style="text-align:right"><div style="font-size:10px;color:var(--muted2);text-transform:uppercase;letter-spacing:.8px">Next level</div><div style="font-family:'Fraunces',serif;font-weight:700;font-size:14px">380 pts</div></div>
-    </div>
+    <div class="topbar"><div><div class="page-title">Tasks</div><div class="page-sub">Personalised to your profile</div></div></div>
+    <div class="pts-card" id="pts-card-tasks"></div>
     <div class="unlock-card">
-      <div class="unlock-header"><div class="unlock-title">Insights Progress</div><div class="unlock-level active">Level 1 — Explorer</div></div>
-      <p class="unlock-desc">Each completed task or assessment earns <strong>1 unlock point</strong>. Reach the next level to unlock written attribute breakdowns.</p>
+      <div class="unlock-header"><div class="unlock-title">Insights Progress</div><div class="unlock-level active" id="task-level-badge"></div></div>
+      <p class="unlock-desc">Each completed task earns <strong>season points</strong>. Reach the next level to unlock written attribute breakdowns.</p>
       <div class="unlock-track" id="task-unlock-track"></div>
       <div class="unlock-track-label" id="task-unlock-label"></div>
     </div>
     <div style="background:rgba(61,139,122,0.07);border:1px solid rgba(61,139,122,0.2);border-radius:12px;padding:14px 16px;margin-bottom:14px;display:flex;align-items:flex-start;gap:10px">
       <span style="font-size:16px;flex-shrink:0">🧬</span>
-      <div><div style="font-size:12px;font-weight:600;color:var(--teal);margin-bottom:3px">Tasks personalised to your profile</div><div style="font-size:12px;color:var(--muted);line-height:1.5">Based on your last assessment, tasks are weighted toward <strong>Resilience</strong> and <strong>Leadership</strong>.</div></div>
+      <div><div style="font-size:12px;font-weight:600;color:var(--teal);margin-bottom:3px">Tasks personalised to your profile</div><div style="font-size:12px;color:var(--muted);line-height:1.5">Based on your last assessment, tasks are weighted toward <strong>Influence</strong> and <strong>Focus</strong> — your two lowest-scoring attributes.</div></div>
     </div>
     <div class="filter-row">
       <div class="chip active" onclick="filterTasks('all',this)">All</div>
-      <div class="chip" onclick="filterTasks('focus',this)">Focus</div>
       <div class="chip" onclick="filterTasks('resilience',this)">Resilience</div>
-      <div class="chip" onclick="filterTasks('leadership',this)">Leadership</div>
       <div class="chip" onclick="filterTasks('discipline',this)">Discipline</div>
+      <div class="chip" onclick="filterTasks('gameiq',this)">Game IQ</div>
+      <div class="chip" onclick="filterTasks('influence',this)">Influence</div>
+      <div class="chip" onclick="filterTasks('intensity',this)">Intensity</div>
+      <div class="chip" onclick="filterTasks('focus',this)">Focus</div>
     </div>
-    <div class="section-label">Pending</div>
-    <div class="task-item personalised" data-attr="resilience"><div class="task-check" onclick="toggleTask(this,event)"></div><div class="task-body"><div class="task-title">Reflect on last week's most difficult moment</div><div class="task-meta"><span class="t-tag tag-resilience">Resilience</span><span class="t-tag tag-personalised">✦ For you</span><span class="task-pts">+40 pts · +1 unlock</span></div></div></div>
-    <div class="task-item personalised" data-attr="leadership"><div class="task-check" onclick="toggleTask(this,event)"></div><div class="task-body"><div class="task-title">Lead the warm-up session at next training</div><div class="task-meta"><span class="t-tag tag-leadership">Leadership</span><span class="t-tag tag-personalised">✦ For you</span><span class="task-pts">+50 pts · +1 unlock</span></div></div></div>
-    <div class="task-item" data-attr="focus"><div class="task-check" onclick="toggleTask(this,event)"></div><div class="task-body"><div class="task-title">10-min mindfulness breathing</div><div class="task-meta"><span class="t-tag tag-focus">Focus</span><span class="task-type">In-app</span><span class="task-pts">+40 pts · +1 unlock</span></div></div></div>
-    <div class="section-label">Optional</div>
-    <div class="task-item" data-attr="discipline"><div class="task-check" onclick="toggleTask(this,event)"></div><div class="task-body"><div class="task-title">Cold shower routine — 5 consecutive days</div><div class="task-meta"><span class="t-tag tag-discipline">Discipline</span><span class="task-type">External habit</span><span class="task-pts">+60 pts · +1 unlock</span></div></div></div>
-    <div class="task-item" data-attr="focus"><div class="task-check" onclick="toggleTask(this,event)"></div><div class="task-body"><div class="task-title">Play chess for 20 minutes</div><div class="task-meta"><span class="t-tag tag-focus">Focus</span><span class="task-type">External</span><span class="task-pts">+25 pts · +1 unlock</span></div></div></div>
-    <div class="section-label">Completed</div>
-    <div class="task-item" data-attr="focus"><div class="task-check done" onclick="toggleTask(this,event)"></div><div class="task-body"><div class="task-title done">Pre-game breathing exercise</div><div class="task-meta"><span class="t-tag tag-focus">Focus</span><span class="task-pts">+40 pts earned</span></div></div></div>
-    <div class="task-item" data-attr="discipline"><div class="task-check done" onclick="toggleTask(this,event)"></div><div class="task-body"><div class="task-title done">Sleep 8h for 3 nights in a row</div><div class="task-meta"><span class="t-tag tag-discipline">Discipline</span><span class="task-pts">+50 pts earned</span></div></div></div>
+    <div class="section-label">Personalised for you</div>
+    <div class="task-item personalised" data-attr="influence"><div class="task-check" onclick="toggleTask(this,event)"></div><div class="task-body"><div class="task-title">Lead the warm-up session at next training</div><div class="task-meta"><span class="t-tag tag-influence">Influence</span><span class="t-tag tag-personalised">✦ For you</span><span class="task-pts">+50 pts</span></div></div></div>
+    <div class="task-item personalised" data-attr="focus"><div class="task-check" onclick="toggleTask(this,event)"></div><div class="task-body"><div class="task-title">10-min mindfulness breathing before next game</div><div class="task-meta"><span class="t-tag tag-focus">Focus</span><span class="t-tag tag-personalised">✦ For you</span><span class="task-pts">+40 pts</span></div></div></div>
+    <div class="task-item personalised" data-attr="influence"><div class="task-check" onclick="toggleTask(this,event)"></div><div class="task-body"><div class="task-title">Voice a tactical opinion to your coach this week</div><div class="task-meta"><span class="t-tag tag-influence">Influence</span><span class="t-tag tag-personalised">✦ For you</span><span class="task-pts">+40 pts</span></div></div></div>
+    <div class="task-item personalised" data-attr="focus"><div class="task-check" onclick="toggleTask(this,event)"></div><div class="task-body"><div class="task-title">Practise positive self-talk for 5 minutes daily — 3 days</div><div class="task-meta"><span class="t-tag tag-focus">Focus</span><span class="t-tag tag-personalised">✦ For you</span><span class="task-pts">+45 pts</span></div></div></div>
+    <div class="section-label">All attributes</div>
+    <div class="task-item" data-attr="resilience"><div class="task-check" onclick="toggleTask(this,event)"></div><div class="task-body"><div class="task-title">Reflect on last week's most difficult moment</div><div class="task-meta"><span class="t-tag tag-resilience">Resilience</span><span class="task-type">Reflective</span><span class="task-pts">+40 pts</span></div></div></div>
+    <div class="task-item" data-attr="discipline"><div class="task-check" onclick="toggleTask(this,event)"></div><div class="task-body"><div class="task-title">Sleep 8h for 3 nights in a row</div><div class="task-meta"><span class="t-tag tag-discipline">Discipline</span><span class="task-type">External habit</span><span class="task-pts">+50 pts</span></div></div></div>
+    <div class="task-item" data-attr="gameiq"><div class="task-check" onclick="toggleTask(this,event)"></div><div class="task-body"><div class="task-title">Watch 20 min of match footage — identify 3 tactical patterns</div><div class="task-meta"><span class="t-tag tag-gameiq">Game IQ</span><span class="task-type">External</span><span class="task-pts">+35 pts</span></div></div></div>
+    <div class="task-item" data-attr="intensity"><div class="task-check" onclick="toggleTask(this,event)"></div><div class="task-body"><div class="task-title">Set a personal sprint record in next training session</div><div class="task-meta"><span class="t-tag tag-intensity">Intensity</span><span class="task-type">On-field</span><span class="task-pts">+40 pts</span></div></div></div>
+    <div class="task-item" data-attr="focus"><div class="task-check" onclick="toggleTask(this,event)"></div><div class="task-body"><div class="task-title">Play chess for 20 minutes</div><div class="task-meta"><span class="t-tag tag-focus">Focus</span><span class="task-type">External</span><span class="task-pts">+25 pts</span></div></div></div>
+    <div class="task-item" data-attr="discipline"><div class="task-check" onclick="toggleTask(this,event)"></div><div class="task-body"><div class="task-title">Set 3 concrete goals for this week and write them down</div><div class="task-meta"><span class="t-tag tag-discipline">Discipline</span><span class="task-type">Reflective</span><span class="task-pts">+30 pts</span></div></div></div>
   </div>
 
-  <!-- ════ HISTORY ════ -->
-  <div class="page" id="page-history">
-    <div class="topbar"><div><div class="page-title">History</div><div class="page-sub">Assessments, attributes & points over time</div></div></div>
+  <!-- ════ ASSESSMENT HISTORY ════ -->
+  <div class="page" id="page-history-assessments">
+    <div class="topbar"><div><div class="page-title">Assessment History</div><div class="page-sub">Your Mental Ratio scores over time</div></div></div>
+    <div id="history-charts"></div>
+    <div class="section-label">Sessions</div>
+    <div id="session-cards"></div>
+    <div class="section-label">Self vs Scout Comparison</div>
+    <div class="card" style="padding:16px 18px"><div id="compare-section"></div></div>
+  </div>
 
-    <div class="tab-row">
-      <button class="tab-btn active" onclick="switchHistTab('scores',this)">Scores</button>
-      <button class="tab-btn" onclick="switchHistTab('attributes',this)">Attributes</button>
-      <button class="tab-btn" onclick="switchHistTab('points',this)">Points</button>
-    </div>
-
-    <!-- SCORES TAB -->
-    <div class="hist-section active" id="hist-scores">
-      <div class="chart-wrap">
-        <div class="chart-title">Mental Ratio Score</div>
-        <div class="chart-sub">Self-assessment history · 6 sessions</div>
-        <svg class="chart" height="120" viewBox="0 0 420 120">
-          <!-- Grid lines -->
-          <line x1="0" y1="20" x2="420" y2="20" stroke="#eee8e0" stroke-width="1"/>
-          <line x1="0" y1="60" x2="420" y2="60" stroke="#eee8e0" stroke-width="1"/>
-          <line x1="0" y1="100" x2="420" y2="100" stroke="#eee8e0" stroke-width="1"/>
-          <text x="0" y="18" class="axis-label">100</text>
-          <text x="0" y="58" class="axis-label">50</text>
-          <text x="0" y="98" class="axis-label">0</text>
-          <!-- Score line: sessions at x=60,120,180,240,300,360 scores:55,60,62,68,68,72 -->
-          <polyline points="60,45 120,40 180,38 240,32 300,32 360,28" fill="none" stroke="#b5623e" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
-          <!-- Area fill -->
-          <polygon points="60,45 120,40 180,38 240,32 300,32 360,28 360,100 60,100" fill="rgba(181,98,62,0.08)"/>
-          <!-- Dots -->
-          <circle cx="60"  cy="45" r="4" fill="#b5623e"/>
-          <circle cx="120" cy="40" r="4" fill="#b5623e"/>
-          <circle cx="180" cy="38" r="4" fill="#b5623e"/>
-          <circle cx="240" cy="32" r="4" fill="#b5623e"/>
-          <circle cx="300" cy="32" r="4" fill="#b5623e"/>
-          <circle cx="360" cy="28" r="5" fill="#b5623e" stroke="#faf7f4" stroke-width="2"/>
-          <!-- X labels -->
-          <text x="46"  y="118" class="axis-label">Sep</text>
-          <text x="106" y="118" class="axis-label">Oct</text>
-          <text x="166" y="118" class="axis-label">Nov</text>
-          <text x="226" y="118" class="axis-label">Dec</text>
-          <text x="286" y="118" class="axis-label">Jan</text>
-          <text x="346" y="118" class="axis-label">Feb</text>
-        </svg>
-      </div>
-
-      <div class="section-label">Assessment Sessions</div>
-      <!-- Session cards -->
-      <div class="hist-item">
-        <div class="hist-item-top"><div><div style="font-family:'Fraunces',serif;font-weight:700;font-size:13px">February 2026</div><div class="hist-item-date">14 Feb · Session 6</div></div><div class="hist-item-score">72</div></div>
-        <div class="hist-mini-bars">
-          <div class="hist-mini-row"><div class="hist-mini-label">Focus</div><div class="hist-mini-bg"><div class="hist-mini-bar" style="width:78%;background:var(--focus)"></div></div><div class="hist-mini-val" style="color:var(--focus)">78</div></div>
-          <div class="hist-mini-row"><div class="hist-mini-label">Resilience</div><div class="hist-mini-bg"><div class="hist-mini-bar" style="width:65%;background:var(--resilience)"></div></div><div class="hist-mini-val" style="color:var(--resilience)">65</div></div>
-          <div class="hist-mini-row"><div class="hist-mini-label">Game IQ</div><div class="hist-mini-bg"><div class="hist-mini-bar" style="width:81%;background:var(--gameiq)"></div></div><div class="hist-mini-val" style="color:var(--gameiq)">81</div></div>
-          <div class="hist-mini-row"><div class="hist-mini-label">Leadership</div><div class="hist-mini-bg"><div class="hist-mini-bar" style="width:60%;background:var(--leadership)"></div></div><div class="hist-mini-val" style="color:var(--leadership)">60</div></div>
-          <div class="hist-mini-row"><div class="hist-mini-label">Assertiveness</div><div class="hist-mini-bg"><div class="hist-mini-bar" style="width:70%;background:var(--assertive)"></div></div><div class="hist-mini-val" style="color:var(--assertive)">70</div></div>
-          <div class="hist-mini-row"><div class="hist-mini-label">Discipline</div><div class="hist-mini-bg"><div class="hist-mini-bar" style="width:76%;background:var(--discipline)"></div></div><div class="hist-mini-val" style="color:var(--discipline)">76</div></div>
-        </div>
-      </div>
-      <div class="hist-item">
-        <div class="hist-item-top"><div><div style="font-family:'Fraunces',serif;font-weight:700;font-size:13px">January 2026</div><div class="hist-item-date">20 Jan · Session 5</div></div><div class="hist-item-score">68</div></div>
-        <div class="hist-mini-bars">
-          <div class="hist-mini-row"><div class="hist-mini-label">Focus</div><div class="hist-mini-bg"><div class="hist-mini-bar" style="width:72%;background:var(--focus)"></div></div><div class="hist-mini-val" style="color:var(--focus)">72</div></div>
-          <div class="hist-mini-row"><div class="hist-mini-label">Resilience</div><div class="hist-mini-bg"><div class="hist-mini-bar" style="width:60%;background:var(--resilience)"></div></div><div class="hist-mini-val" style="color:var(--resilience)">60</div></div>
-          <div class="hist-mini-row"><div class="hist-mini-label">Game IQ</div><div class="hist-mini-bg"><div class="hist-mini-bar" style="width:78%;background:var(--gameiq)"></div></div><div class="hist-mini-val" style="color:var(--gameiq)">78</div></div>
-          <div class="hist-mini-row"><div class="hist-mini-label">Leadership</div><div class="hist-mini-bg"><div class="hist-mini-bar" style="width:55%;background:var(--leadership)"></div></div><div class="hist-mini-val" style="color:var(--leadership)">55</div></div>
-          <div class="hist-mini-row"><div class="hist-mini-label">Assertiveness</div><div class="hist-mini-bg"><div class="hist-mini-bar" style="width:68%;background:var(--assertive)"></div></div><div class="hist-mini-val" style="color:var(--assertive)">68</div></div>
-          <div class="hist-mini-row"><div class="hist-mini-label">Discipline</div><div class="hist-mini-bg"><div class="hist-mini-bar" style="width:72%;background:var(--discipline)"></div></div><div class="hist-mini-val" style="color:var(--discipline)">72</div></div>
-        </div>
-      </div>
-    </div>
-
-    <!-- ATTRIBUTES TAB -->
-    <div class="hist-section" id="hist-attributes">
-      <div class="chart-wrap">
-        <div class="chart-title">Attribute Trends</div>
-        <div class="chart-sub">All 6 attributes over 6 sessions</div>
-        <svg class="chart" height="140" viewBox="0 0 420 140">
-          <line x1="30" y1="10"  x2="420" y2="10"  stroke="#eee8e0" stroke-width="1"/>
-          <line x1="30" y1="50"  x2="420" y2="50"  stroke="#eee8e0" stroke-width="1"/>
-          <line x1="30" y1="90"  x2="420" y2="90"  stroke="#eee8e0" stroke-width="1"/>
-          <line x1="30" y1="130" x2="420" y2="130" stroke="#eee8e0" stroke-width="1"/>
-          <text x="0" y="13"  class="axis-label">100</text>
-          <text x="0" y="53"  class="axis-label">60</text>
-          <text x="0" y="93"  class="axis-label">20</text>
-          <!-- Focus #7e6fa0 -->
-          <polyline points="60,38 120,34 180,32 240,30 300,28 360,22" fill="none" stroke="#7e6fa0" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" stroke-dasharray="0"/>
-          <!-- Resilience #3d8b7a -->
-          <polyline points="60,68 120,64 180,60 240,56 300,58 360,53" fill="none" stroke="#3d8b7a" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
-          <!-- Game IQ #6b9e78 -->
-          <polyline points="60,34 120,30 180,28 240,26 300,24 360,20" fill="none" stroke="#6b9e78" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
-          <!-- Leadership #b09070 -->
-          <polyline points="60,80 120,76 180,72 240,70 300,68 360,64" fill="none" stroke="#b09070" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
-          <!-- Assertiveness #c47a7a -->
-          <polyline points="60,54 120,50 180,48 240,46 300,44 360,42" fill="none" stroke="#c47a7a" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
-          <!-- Discipline #b5623e -->
-          <polyline points="60,44 120,40 180,38 240,36 300,34 360,31" fill="none" stroke="#b5623e" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
-          <!-- X labels -->
-          <text x="46"  y="142" class="axis-label">Sep</text>
-          <text x="106" y="142" class="axis-label">Oct</text>
-          <text x="166" y="142" class="axis-label">Nov</text>
-          <text x="226" y="142" class="axis-label">Dec</text>
-          <text x="286" y="142" class="axis-label">Jan</text>
-          <text x="346" y="142" class="axis-label">Feb</text>
-        </svg>
-        <div class="chart-legend">
-          <div class="legend-item"><div class="legend-dot" style="background:var(--focus)"></div>Focus</div>
-          <div class="legend-item"><div class="legend-dot" style="background:var(--resilience)"></div>Resilience</div>
-          <div class="legend-item"><div class="legend-dot" style="background:var(--gameiq)"></div>Game IQ</div>
-          <div class="legend-item"><div class="legend-dot" style="background:var(--leadership)"></div>Leadership</div>
-          <div class="legend-item"><div class="legend-dot" style="background:var(--assertive)"></div>Assertiveness</div>
-          <div class="legend-item"><div class="legend-dot" style="background:var(--discipline)"></div>Discipline</div>
-        </div>
-      </div>
-    </div>
-
-    <!-- POINTS TAB -->
-    <div class="hist-section" id="hist-points">
-      <div class="chart-wrap">
-        <div class="chart-title">Season Points</div>
-        <div class="chart-sub">Cumulative points earned over time</div>
-        <svg class="chart" height="120" viewBox="0 0 420 120">
-          <line x1="0" y1="20"  x2="420" y2="20"  stroke="#eee8e0" stroke-width="1"/>
-          <line x1="0" y1="60"  x2="420" y2="60"  stroke="#eee8e0" stroke-width="1"/>
-          <line x1="0" y1="100" x2="420" y2="100" stroke="#eee8e0" stroke-width="1"/>
-          <text x="0" y="18"  class="axis-label">1000</text>
-          <text x="0" y="58"  class="axis-label">500</text>
-          <text x="0" y="98"  class="axis-label">0</text>
-          <!-- pts cumulative: 80,180,300,420,530,620 -->
-          <polygon points="60,92 120,82 180,70 240,58 300,47 360,38 360,100 60,100" fill="rgba(181,98,62,0.08)"/>
-          <polyline points="60,92 120,82 180,70 240,58 300,47 360,38" fill="none" stroke="#b5623e" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
-          <circle cx="60"  cy="92" r="4" fill="#b5623e"/>
-          <circle cx="120" cy="82" r="4" fill="#b5623e"/>
-          <circle cx="180" cy="70" r="4" fill="#b5623e"/>
-          <circle cx="240" cy="58" r="4" fill="#b5623e"/>
-          <circle cx="300" cy="47" r="4" fill="#b5623e"/>
-          <circle cx="360" cy="38" r="5" fill="#b5623e" stroke="#faf7f4" stroke-width="2"/>
-          <text x="46"  y="118" class="axis-label">Sep</text>
-          <text x="106" y="118" class="axis-label">Oct</text>
-          <text x="166" y="118" class="axis-label">Nov</text>
-          <text x="226" y="118" class="axis-label">Dec</text>
-          <text x="286" y="118" class="axis-label">Jan</text>
-          <text x="346" y="118" class="axis-label">Feb</text>
-        </svg>
-      </div>
-
-      <div class="section-label">Points Log</div>
-      <div class="card" style="padding:14px 18px">
-        <div class="pts-hist-item"><div class="pts-hist-icon" style="background:rgba(61,139,122,0.1)">✓</div><div class="pts-hist-info"><div class="pts-hist-label">Pre-game breathing exercise</div><div class="pts-hist-date">14 Feb · Task</div></div><div class="pts-hist-val">+40</div></div>
-        <div class="pts-hist-item"><div class="pts-hist-icon" style="background:rgba(181,98,62,0.1)">📋</div><div class="pts-hist-info"><div class="pts-hist-label">Self-Assessment submitted</div><div class="pts-hist-date">14 Feb · Assessment</div></div><div class="pts-hist-val">+20</div></div>
-        <div class="pts-hist-item"><div class="pts-hist-icon" style="background:rgba(61,139,122,0.1)">✓</div><div class="pts-hist-info"><div class="pts-hist-label">Sleep 8h for 3 nights</div><div class="pts-hist-date">10 Feb · Task</div></div><div class="pts-hist-val">+50</div></div>
-        <div class="pts-hist-item"><div class="pts-hist-icon" style="background:rgba(61,139,122,0.1)">✓</div><div class="pts-hist-info"><div class="pts-hist-label">Chess — 20 min session</div><div class="pts-hist-date">7 Feb · Task</div></div><div class="pts-hist-val">+25</div></div>
-        <div class="pts-hist-item"><div class="pts-hist-icon" style="background:rgba(176,144,112,0.1)">🏆</div><div class="pts-hist-info"><div class="pts-hist-label">Level up bonus</div><div class="pts-hist-date">1 Feb · Milestone</div></div><div class="pts-hist-val">+50</div></div>
-        <div class="pts-hist-item"><div class="pts-hist-icon" style="background:rgba(181,98,62,0.1)">📋</div><div class="pts-hist-info"><div class="pts-hist-label">Self-Assessment submitted</div><div class="pts-hist-date">20 Jan · Assessment</div></div><div class="pts-hist-val">+20</div></div>
-      </div>
-    </div>
+  <!-- ════ TASK HISTORY ════ -->
+  <div class="page" id="page-history-tasks">
+    <div class="topbar"><div><div class="page-title">Task History</div><div class="page-sub">Points earned & completed tasks</div></div></div>
+    <div class="pts-card" id="pts-card-history"></div>
+    <div id="points-chart"></div>
+    <div class="section-label">Points Log</div>
+    <div class="card" style="padding:14px 18px" id="points-log-list"></div>
+    <div class="section-label">Completed Tasks</div>
+    <div id="completed-tasks-list"></div>
   </div>
 
   <!-- ════ OUTSIDER EVALUATION ════ -->
   <div class="page" id="page-evaluation">
-    <div class="topbar"><div><div class="page-title">Outsider Evaluation</div><div class="page-sub">Request a professional assessment of your mental profile</div></div></div>
-
-    <!-- Active request tracker -->
-    <div class="tracker">
-      <div class="tracker-title">Current Request — Feb 2026 · Anonymous</div>
-      <div class="tracker-steps">
-        <div class="tracker-step done">
-          <div class="step-dot done">✓</div>
-          <div class="step-body">
-            <div class="step-label done">Request submitted</div>
-            <div class="step-date">12 Feb 2026</div>
-          </div>
-        </div>
-        <div class="tracker-step done">
-          <div class="step-dot done">✓</div>
-          <div class="step-body">
-            <div class="step-label done">Payment confirmed</div>
-            <div class="step-date">12 Feb 2026 · €50.00</div>
-          </div>
-        </div>
-        <div class="tracker-step">
-          <div class="step-dot active">…</div>
-          <div class="step-body">
-            <div class="step-label active">Under review</div>
-            <div class="step-desc">Your assessment data has been shared with the specialist. Estimated 3–5 working days.</div>
-          </div>
-        </div>
-        <div class="tracker-step">
-          <div class="step-dot pending">4</div>
-          <div class="step-body">
-            <div class="step-label pending">Report delivered</div>
-            <div class="step-desc">You will be notified when the specialist's report is ready.</div>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <!-- New request CTA -->
+    <div class="topbar"><div><div class="page-title">Outsider Evaluation</div><div class="page-sub">Professional assessment of your mental profile</div></div></div>
     <div class="premium-hero">
-      <div class="premium-hero-top">
-        <div class="premium-hero-title">Request New Evaluation</div>
-        <div class="premium-badge">Premium</div>
-      </div>
-      <p>A specialist will review your full assessment history and provide a written evaluation of all 6 mental attributes — independent of your self-scoring.</p>
-      <div class="price-row">
-        <div class="price-val">€50</div>
-        <div class="price-note">One-time per request<br>Results in 3–5 working days</div>
-      </div>
+      <div class="premium-hero-top"><div class="premium-hero-title">Request Evaluation</div><div class="premium-badge">Premium</div></div>
+      <p>One or more anonymous scouts will review your assessment history and produce an independent evaluation across all 6 attributes — without seeing your self-scores.</p>
+      <div class="price-row"><div class="price-val">€50</div><div class="price-note">One-time per request<br>Results in 3–5 working days</div></div>
       <button class="btn-purchase" onclick="openPurchaseModal()">Request Evaluation — €50</button>
     </div>
-
-    <!-- Past evaluations -->
     <div class="section-label">Past Evaluations</div>
     <div class="past-evals">
       <div class="past-eval-item">
-        <div class="eval-score-badge" style="background:rgba(61,139,122,0.1);color:var(--teal)">68</div>
-        <div class="past-eval-info">
-          <div class="past-eval-label">Specialist Evaluation</div>
-          <div class="past-eval-meta">November 2025 · Anonymous specialist</div>
-        </div>
-        <div class="eval-status status-completed">Completed</div>
-      </div>
-      <div class="past-eval-item">
-        <div class="eval-score-badge" style="background:rgba(176,144,112,0.1);color:var(--sand)">61</div>
-        <div class="past-eval-info">
-          <div class="past-eval-label">Specialist Evaluation</div>
-          <div class="past-eval-meta">August 2025 · Anonymous specialist</div>
-        </div>
+        <div class="eval-score-badge" style="background:rgba(61,139,122,0.1);color:var(--teal)">97</div>
+        <div class="past-eval-info"><div class="past-eval-label">Scout Evaluation (2 scouts + JM)</div><div class="past-eval-meta">Season 2025/26 · 5 attributes + Focus</div></div>
         <div class="eval-status status-completed">Completed</div>
       </div>
     </div>
-
-    <!-- What's included -->
     <div class="card">
       <div style="font-family:'Fraunces',serif;font-weight:700;font-size:14px;margin-bottom:12px">What's included</div>
       <div style="display:flex;flex-direction:column;gap:10px">
-        <div style="display:flex;gap:10px;align-items:flex-start"><span style="color:var(--teal);font-size:14px;flex-shrink:0">✦</span><div style="font-size:13px;color:var(--muted);line-height:1.5">Written breakdown of all 6 attributes from an external specialist perspective</div></div>
+        <div style="display:flex;gap:10px;align-items:flex-start"><span style="color:var(--teal);font-size:14px;flex-shrink:0">✦</span><div style="font-size:13px;color:var(--muted);line-height:1.5">Written breakdown of all 6 attributes from an external scout perspective</div></div>
         <div style="display:flex;gap:10px;align-items:flex-start"><span style="color:var(--teal);font-size:14px;flex-shrink:0">✦</span><div style="font-size:13px;color:var(--muted);line-height:1.5">Comparison between your self-score and the external evaluation</div></div>
+        <div style="display:flex;gap:10px;align-items:flex-start"><span style="color:var(--teal);font-size:14px;flex-shrink:0">✦</span><div style="font-size:13px;color:var(--muted);line-height:1.5">Scouts evaluate blind — they do not see your self-assessment scores</div></div>
       </div>
-    </div>
-
-    <div style="display:flex;align-items:center;gap:12px;padding:14px 16px;background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);margin-bottom:12px;cursor:pointer">
-      <span style="font-size:18px;flex-shrink:0">💬</span>
-      <div style="flex:1"><div style="font-size:13px;font-weight:600;margin-bottom:2px">Questions about the evaluation?</div><div style="font-size:12px;color:var(--muted)">Contact us before or after requesting — we'll walk you through it.</div></div>
-      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--muted2)" stroke-width="2"><path d="M9 18l6-6-6-6"/></svg>
     </div>
   </div>
 
-<!-- PURCHASE MODAL -->
+  <!-- ════ CONTACT ════ -->
+  <div class="page" id="page-contact">
+    <div class="topbar"><div><div class="page-title">Contact</div><div class="page-sub">Reach your admin or get support</div></div></div>
+    <div class="contact-method" onclick="showToast('Opening message...')"><div class="contact-method-icon" style="background:rgba(61,139,122,0.1)">💬</div><div class="contact-method-body"><div class="contact-method-label">Message us</div><div class="contact-method-sub">Send a written question. We reply within 24 hours.</div></div></div>
+    <div class="contact-method" onclick="showToast('Opening email...')"><div class="contact-method-icon" style="background:rgba(126,111,160,0.1)">📧</div><div class="contact-method-body"><div class="contact-method-label">Email support</div><div class="contact-method-sub">support@mentalratio.com — for non-urgent queries.</div></div></div>
+    <div class="section-label">Frequently Asked Questions</div>
+    <div class="faq-item" onclick="this.classList.toggle('open')"><div class="faq-q">What does my Mental Ratio score mean?<svg class="faq-chevron" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--muted2)" stroke-width="2"><path d="M9 18l6-6-6-6"/></svg></div><div class="faq-a">Your Mental Ratio score (0–100) is a weighted average of your six mental performance attributes. It reflects your mental readiness for peak performance, not a fixed measure of ability.</div></div>
+    <div class="faq-item" onclick="this.classList.toggle('open')"><div class="faq-q">Who sees my assessment results?<svg class="faq-chevron" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--muted2)" stroke-width="2"><path d="M9 18l6-6-6-6"/></svg></div><div class="faq-a">Your assessment history is visible to your assigned specialist. Outsider Evaluation requests are reviewed by anonymous scouts — neither party sees the other's identity or scores.</div></div>
+    <div class="faq-item" onclick="this.classList.toggle('open')"><div class="faq-q">How do I unlock attribute insights?<svg class="faq-chevron" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--muted2)" stroke-width="2"><path d="M9 18l6-6-6-6"/></svg></div><div class="faq-a">Completing tasks and submitting assessments earn season points. As you accumulate points you progress through levels (Explorer → Analyst → Specialist → Elite), unlocking written strengths and development notes for each attribute.</div></div>
+    <div class="faq-item" onclick="this.classList.toggle('open')"><div class="faq-q">What is an Outsider Evaluation?<svg class="faq-chevron" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--muted2)" stroke-width="2"><path d="M9 18l6-6-6-6"/></svg></div><div class="faq-a">A premium service where one or more scouts independently evaluate your mental profile based on your assessment history, without seeing your self-scores. €50 per request, delivered in 3–5 working days.</div></div>
+    <div class="faq-item" onclick="this.classList.toggle('open')"><div class="faq-q">Can I delete my account and data?<svg class="faq-chevron" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--muted2)" stroke-width="2"><path d="M9 18l6-6-6-6"/></svg></div><div class="faq-a">Yes. You own your data under GDPR. Request full data deletion via Settings → Data & Privacy.</div></div>
+  </div>
+
+  <!-- ════ SETTINGS ════ -->
+  <div class="page" id="page-settings">
+    <div class="topbar"><div><div class="page-title">Settings</div><div class="page-sub">Account, preferences & data</div></div></div>
+    <div style="text-align:center;margin-bottom:20px">
+      <div style="width:60px;height:60px;border-radius:50%;background:linear-gradient(135deg,var(--rose),var(--sand));display:flex;align-items:center;justify-content:center;font-family:'Fraunces',serif;font-weight:700;font-size:22px;color:#fff;margin:0 auto 10px">V</div>
+      <div style="font-family:'Fraunces',serif;font-weight:700;font-size:16px">Vital</div>
+      <div style="font-size:12px;color:var(--muted)">Athlete · Season 2025/26</div>
+    </div>
+    <div class="section-label">Notifications</div>
+    <div class="settings-row"><div class="settings-row-icon" style="background:rgba(181,98,62,0.1)">📋</div><div class="settings-row-body"><div class="settings-row-label">New assessment available</div><div class="settings-row-sub">Notify when a new session opens</div></div><button class="toggle on" onclick="this.classList.toggle('on')"></button></div>
+    <div class="settings-row"><div class="settings-row-icon" style="background:rgba(61,139,122,0.1)">⭐</div><div class="settings-row-body"><div class="settings-row-label">Task reminders</div><div class="settings-row-sub">Weekly nudge for pending tasks</div></div><button class="toggle on" onclick="this.classList.toggle('on')"></button></div>
+    <div class="settings-row"><div class="settings-row-icon" style="background:rgba(126,111,160,0.1)">🏆</div><div class="settings-row-body"><div class="settings-row-label">Evaluation ready</div><div class="settings-row-sub">Alert when scout report is delivered</div></div><button class="toggle on" onclick="this.classList.toggle('on')"></button></div>
+    <div class="section-label">Data & Privacy</div>
+    <div class="settings-row"><div class="settings-row-icon" style="background:rgba(176,144,112,0.1)">📁</div><div class="settings-row-body"><div class="settings-row-label">Export my data</div><div class="settings-row-sub">Download all assessments and history</div></div><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--muted2)" stroke-width="2"><path d="M9 18l6-6-6-6"/></svg></div>
+    <div class="settings-row"><div class="settings-row-icon" style="background:rgba(61,139,122,0.1)">🔒</div><div class="settings-row-body"><div class="settings-row-label">Data sharing with specialist</div><div class="settings-row-sub">Specialist has access to your assessment history</div></div><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--muted2)" stroke-width="2"><path d="M9 18l6-6-6-6"/></svg></div>
+    <div class="settings-row"><div class="settings-row-icon" style="background:rgba(196,122,122,0.1)">🗑️</div><div class="settings-row-body"><div class="settings-row-label">Request data deletion</div><div class="settings-row-sub">GDPR — permanently remove your account</div></div><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--muted2)" stroke-width="2"><path d="M9 18l6-6-6-6"/></svg></div>
+    <div class="section-label">About</div>
+    <div class="settings-row"><div class="settings-row-icon" style="background:rgba(181,98,62,0.1)">ℹ️</div><div class="settings-row-body"><div class="settings-row-label">App version</div></div><span class="settings-row-action">POC v6</span></div>
+    <div class="settings-row" onclick="showPage('contact')"><div class="settings-row-icon" style="background:rgba(61,139,122,0.1)">💬</div><div class="settings-row-body"><div class="settings-row-label">Contact & Support</div></div><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--muted2)" stroke-width="2"><path d="M9 18l6-6-6-6"/></svg></div>
+    <div style="padding:16px;text-align:center;margin-top:8px"><div style="font-size:12px;color:var(--muted2)">Mental Ratio · GDPR Compliant</div><div style="font-size:11px;color:var(--muted2);margin-top:4px">You own your data.</div></div>
+  </div>
+
+</main>
+
+<!-- ═══ NOTIFICATION PANEL ═══ -->
+<div class="notif-overlay" id="notif-overlay" onclick="closeNotifPanel()"></div>
+<div class="notif-panel" id="notif-panel-drawer">
+  <div class="notif-panel-header"><div class="notif-panel-title">Notifications</div><button class="notif-panel-close" onclick="closeNotifPanel()">✕</button></div>
+  <div class="notif-panel-body">
+    <div class="notif-item unread"><div class="notif-icon" style="background:rgba(181,98,62,0.1)">📋</div><div class="notif-body"><div class="notif-text">New <strong>Self-Assessment</strong> available. Complete it to earn +20 season points.</div><div class="notif-time">Today</div></div><div class="notif-unread-dot"></div></div>
+    <div class="notif-item"><div class="notif-icon" style="background:rgba(61,139,122,0.1)">✦</div><div class="notif-body"><div class="notif-text">Tasks personalised toward <strong>Influence</strong> and <strong>Focus</strong> based on your assessment.</div><div class="notif-time">15 Feb</div></div></div>
+    <div class="notif-item"><div class="notif-icon" style="background:rgba(181,98,62,0.08)">⚡</div><div class="notif-body"><div class="notif-text">Season milestone reached — <strong>600+ points</strong>.</div><div class="notif-time">15 Feb</div></div></div>
+    <div class="notif-item"><div class="notif-icon" style="background:rgba(176,144,112,0.1)">🏆</div><div class="notif-body"><div class="notif-text">You reached <strong>Level 2 — Analyst</strong>. Top-scoring attribute insights now unlocked.</div><div class="notif-time">2 Jan</div></div></div>
+  </div>
+</div>
+
+<!-- ═══ PURCHASE MODAL ═══ -->
 <div class="modal-overlay" id="modal-overlay" onclick="closePurchaseModal()">
   <div class="modal" onclick="event.stopPropagation()">
     <div class="modal-title">Confirm Evaluation Request</div>
-    <div class="modal-desc">Your current assessment data will be shared with a specialist. You will be notified when the report is ready, typically within 3–5 working days.</div>
-    <div class="modal-price-row">
-      <div class="modal-price">€50</div>
-      <div class="modal-price-note">one-time · this request</div>
-    </div>
+    <div class="modal-desc">Your assessment data will be shared with anonymous scouts. They will not see your self-scores. Results in 3–5 working days.</div>
+    <div class="modal-price-row"><div class="modal-price">€50</div><div class="modal-price-note">one-time · this request</div></div>
     <button class="modal-btn" onclick="confirmPurchase()">Confirm & Pay €50</button>
     <button class="modal-cancel" onclick="closePurchaseModal()">Cancel</button>
   </div>
@@ -701,227 +275,10 @@
 
 <div class="toast" id="toast">✓ Done</div>
 
-<script>
-  // ── State ──
-  const UNLOCK_TOTAL = 10;
-  let unlockPoints = 4;
-
-  const attrs = [
-    { key:'focus',      icon:'🎯', name:'Focus',        score:78, color:'var(--focus)',      unlocked:true,
-      strengths:'You demonstrate strong capacity to enter a concentrated state during structured training sessions. Your pre-game routines appear to anchor your attention effectively.',
-      weaknesses:'Under unexpected disruptions — crowd noise, referee decisions — your concentration shows fragility. Recovery time after distraction is above average.' },
-    { key:'resilience', icon:'🏔️', name:'Resilience',   score:65, color:'var(--resilience)', unlocked:false, strengths:'', weaknesses:'' },
-    { key:'gameiq',     icon:'🧠', name:'Game IQ',      score:81, color:'var(--gameiq)',      unlocked:true,
-      strengths:'Decision-making under time pressure is a clear asset. You read space ahead of the ball and anticipate transitions before they develop.',
-      weaknesses:'Late-game fatigue affects decision quality. Complex multi-option scenarios sometimes produce hesitation where instinct should lead.' },
-    { key:'leadership', icon:'👑', name:'Leadership',   score:60, color:'var(--leadership)', unlocked:false, strengths:'', weaknesses:'' },
-    { key:'assertive',  icon:'⚔️', name:'Assertiveness',score:70, color:'var(--assertive)',  unlocked:false, strengths:'', weaknesses:'' },
-    { key:'discipline', icon:'🔒', name:'Discipline',   score:76, color:'var(--discipline)', unlocked:true,
-      strengths:'Routine adherence is above average. Sleep and nutrition habits are consistent, and you respond well to structured weekly training blocks.',
-      weaknesses:'Discipline shows vulnerability when external motivation is absent — specifically during low-stakes periods mid-season.' },
-  ];
-
-  // ── Unlock tracks ──
-  function renderUnlockTracks() {
-    ['dash','task'].forEach(prefix => {
-      const track = document.getElementById(prefix+'-unlock-track');
-      const label = document.getElementById(prefix+'-unlock-label');
-      if (!track) return;
-      track.innerHTML = '';
-      for (let i=0;i<UNLOCK_TOTAL;i++) {
-        const pip = document.createElement('div');
-        pip.className = 'unlock-pip'+(i<unlockPoints?' filled':'');
-        track.appendChild(pip);
-      }
-      if (label) label.textContent = `${unlockPoints} / ${UNLOCK_TOTAL} points toward Level 2 — Analyst`;
-    });
-  }
-
-  // ── Attr grid ──
-  function renderAttrGrid() {
-    const grid = document.getElementById('attr-grid');
-    grid.innerHTML = '';
-    attrs.forEach(a => {
-      const card = document.createElement('div');
-      card.className = 'attr-card';
-      card.onclick = () => openInsight(a.key);
-      card.innerHTML = `
-        <span class="attr-icon">${a.icon}</span>
-        <div class="attr-name">${a.name}</div>
-        <div class="attr-score" style="color:${a.color}">${a.score}</div>
-        <div class="attr-bar-bg"><div class="attr-bar" style="width:${a.score}%;background:${a.color}"></div></div>
-        ${a.unlocked
-          ? `<div class="attr-locked"><span style="font-size:10px;color:var(--teal)">✦ Insight available</span></div>`
-          : `<div class="attr-locked"><span style="font-size:11px">🔒</span><span class="attr-locked-label">${UNLOCK_TOTAL-unlockPoints} pts to unlock</span></div>`}
-      `;
-      grid.appendChild(card);
-    });
-  }
-
-  // ── Insight panel ──
-  function openInsight(key) {
-    const a = attrs.find(x=>x.key===key);
-    const panel = document.getElementById('insight-panel');
-    document.getElementById('insight-title').textContent = `${a.icon} ${a.name}`;
-    const body = document.getElementById('insight-body');
-    if (a.unlocked) {
-      body.innerHTML = `
-        <div style="display:flex;align-items:center;gap:8px;margin-bottom:14px">
-          <div style="font-family:'Fraunces',serif;font-weight:900;font-size:28px;color:${a.color}">${a.score}</div>
-          <div style="font-size:12px;color:var(--muted);line-height:1.4">Current score<br><span style="color:${a.color}">↑ trend improving</span></div>
-        </div>
-        <div class="insight-section">
-          <div class="insight-section-title"><span style="color:var(--teal)">▲</span> Strengths</div>
-          <div class="insight-text">${a.strengths}</div>
-        </div>
-        <div class="insight-section">
-          <div class="insight-section-title"><span style="color:var(--rose)">▼</span> Areas to develop</div>
-          <div class="insight-text">${a.weaknesses}</div>
-        </div>`;
-    } else {
-      const needed = UNLOCK_TOTAL - unlockPoints;
-      body.innerHTML = `<div class="insight-locked">
-        <div class="insight-locked-icon">🔒</div>
-        <div class="insight-locked-text">The written breakdown for <strong>${a.name}</strong> is not yet unlocked.</div>
-        <div class="insight-locked-label">${needed} more point${needed!==1?'s':''} needed</div>
-      </div>`;
-    }
-    const grid = document.getElementById('attr-grid');
-    grid.parentNode.insertBefore(panel, grid);
-    panel.classList.add('open');
-    panel.scrollIntoView({behavior:'smooth',block:'nearest'});
-  }
-
-  function closeInsight() { document.getElementById('insight-panel').classList.remove('open'); }
-
-  // ── Navigation ──
-  function showPage(name) {
-    document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
-    document.querySelectorAll('.nav-btn').forEach(n=>n.classList.remove('active'));
-    document.getElementById('page-'+name).classList.add('active');
-    document.getElementById('nav-'+name).classList.add('active');
-    document.querySelector('.main').scrollTo(0,0);
-  }
-
-  // ── History tabs ──
-  function switchHistTab(name, btn) {
-    document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active'));
-    document.querySelectorAll('.hist-section').forEach(s=>s.classList.remove('active'));
-    btn.classList.add('active');
-    document.getElementById('hist-'+name).classList.add('active');
-  }
-
-  // ── Assessment ──
-  const questions = [
-    {attr:'🎯 Focus',color:'var(--focus)',text:'During a high-pressure moment in a game, how often can you maintain concentration without your mind drifting?'},
-    {attr:'🏔️ Resilience',color:'var(--resilience)',text:'After a mistake or poor performance, how quickly do you recover emotionally and refocus?'},
-    {attr:'🧠 Game IQ',color:'var(--gameiq)',text:'How confident are you in reading a situation and making the right decision under time pressure?'},
-    {attr:'👑 Leadership',color:'var(--leadership)',text:'How often do you take the initiative to guide or positively influence teammates in critical moments?'},
-    {attr:'⚔️ Assertiveness',color:'var(--assertive)',text:'How comfortable are you asserting your point of view in a team setting, even when it is unpopular?'},
-    {attr:'🔒 Discipline',color:'var(--discipline)',text:'How consistently do you follow your routines and commitments, even when motivation is low?'},
-  ];
-  const answerLabels = ['Rarely / never','Sometimes','Most of the time','Consistently'];
-  let currentQ=0, answers=new Array(6).fill(null);
-
-  function renderQ() {
-    const q = questions[currentQ];
-    document.getElementById('q-attr').textContent = q.attr;
-    document.getElementById('q-attr').style.color = q.color;
-    document.getElementById('q-text').textContent = q.text;
-    document.getElementById('assess-sub').textContent = `Question ${currentQ+1} of ${questions.length}`;
-    document.querySelectorAll('.progress-pip').forEach((p,i)=>p.classList.toggle('done',i<=currentQ));
-    const grid = document.getElementById('answer-grid');
-    grid.innerHTML='';
-    [1,2,3,4].forEach(val=>{
-      const btn = document.createElement('button');
-      btn.className='answer-btn'+(answers[currentQ]===val?' selected':'');
-      btn.innerHTML=`<span class="ans-num">${val}</span><span class="ans-label">${answerLabels[val-1]}</span>`;
-      btn.onclick=()=>selectAnswer(val);
-      grid.appendChild(btn);
-    });
-    document.getElementById('btn-next').disabled=(answers[currentQ]===null);
-    document.getElementById('btn-back').style.display=currentQ>0?'block':'none';
-    document.getElementById('btn-next').textContent=currentQ===questions.length-1?'Submit':'Next →';
-  }
-
-  function selectAnswer(val) {
-    answers[currentQ]=val;
-    document.querySelectorAll('.answer-btn').forEach((b,i)=>b.classList.toggle('selected',i+1===val));
-    document.getElementById('btn-next').disabled=false;
-  }
-
-  function nextQ() { if(currentQ<questions.length-1){currentQ++;renderQ();}else submitAssessment(); }
-  function prevQ() { if(currentQ>0){currentQ--;renderQ();} }
-
-  function submitAssessment() {
-    const attrNames=['Focus','Resilience','Game IQ','Leadership','Assertiveness','Discipline'];
-    const colors=['var(--focus)','var(--resilience)','var(--gameiq)','var(--leadership)','var(--assertive)','var(--discipline)'];
-    const avg=answers.reduce((a,b)=>a+(b||0),0)/answers.length;
-    const score=Math.round((avg/4)*100);
-    document.getElementById('q-card').style.display='none';
-    document.getElementById('q-nav').style.display='none';
-    document.getElementById('assess-progress').style.display='none';
-    document.getElementById('assess-sub').textContent='Completed';
-    document.getElementById('score-result').textContent=score;
-    document.getElementById('score-breakdown').innerHTML=attrNames.map((n,i)=>{
-      const s=Math.round(((answers[i]||2)/4)*100);
-      return `<div class="score-row"><div class="score-row-label">${n}</div><div class="score-row-bar-bg"><div class="score-row-bar" style="width:${s}%;background:${colors[i]}"></div></div><div class="score-row-val" style="color:${colors[i]}">${s}</div></div>`;
-    }).join('');
-    document.getElementById('score-preview').style.display='flex';
-    unlockPoints=Math.min(unlockPoints+1,UNLOCK_TOTAL);
-    renderUnlockTracks(); renderAttrGrid();
-    showToast('✓ Submitted · +1 unlock point earned');
-  }
-
-  document.getElementById('nav-assessment').addEventListener('click',()=>{
-    currentQ=0; answers=new Array(6).fill(null);
-    document.getElementById('q-card').style.display='';
-    document.getElementById('q-nav').style.display='';
-    document.getElementById('assess-progress').style.display='';
-    document.getElementById('score-preview').style.display='none';
-    renderQ();
-  });
-
-  // ── Tasks ──
-  function toggleTask(el,e) {
-    e.stopPropagation();
-    const wasDone=el.classList.contains('done');
-    el.classList.toggle('done');
-    el.nextElementSibling.querySelector('.task-title').classList.toggle('done');
-    if(!wasDone){
-      unlockPoints=Math.min(unlockPoints+1,UNLOCK_TOTAL);
-      renderUnlockTracks(); renderAttrGrid();
-      showToast('✓ Task done · +1 unlock point earned');
-    }
-  }
-
-  function filterTasks(attr,chipEl) {
-    document.querySelectorAll('.chip').forEach(c=>c.classList.remove('active'));
-    chipEl.classList.add('active');
-    document.querySelectorAll('.task-item').forEach(item=>{
-      item.style.display=(attr==='all'||item.dataset.attr===attr)?'flex':'none';
-    });
-  }
-
-  // ── Purchase modal ──
-  function openPurchaseModal()  { document.getElementById('modal-overlay').classList.add('open'); }
-  function closePurchaseModal() { document.getElementById('modal-overlay').classList.remove('open'); }
-  function confirmPurchase() {
-    closePurchaseModal();
-    showToast('✓ Request submitted · you will be notified shortly');
-  }
-
-  // ── Toast ──
-  function showToast(msg) {
-    const t=document.getElementById('toast');
-    t.textContent=msg; t.classList.add('show');
-    setTimeout(()=>t.classList.remove('show'),2800);
-  }
-
-  // ── Init ──
-  renderUnlockTracks();
-  renderAttrGrid();
-  renderQ();
-</script>
+<!-- Scripts: load order matters -->
+<script src="js/data.js"></script>
+<script src="js/state.js"></script>
+<script src="js/ui.js"></script>
+<script src="js/app.js"></script>
 </body>
 </html>
