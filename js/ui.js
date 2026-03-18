@@ -115,24 +115,20 @@ function renderAttrGrid() {
 function openInsight(key) {
   const a = ATTRS.find(x => x.key === key);
   const selfScore = currentSession().scores[key];
-  const scoutScore = SCOUT_EVAL.scores[key];
   const unlocked = isAttrUnlocked(key);
   const panel = document.getElementById('insight-panel');
   document.getElementById('insight-title').textContent = `${a.icon} ${a.name}`;
   const body = document.getElementById('insight-body');
 
-  const scoreCompare = `
-    <div style="display:flex;align-items:center;gap:14px;margin-bottom:14px">
-      <div><div style="font-size:10px;color:var(--muted2);text-transform:uppercase;letter-spacing:1px;margin-bottom:2px">Self</div>
-        <div style="font-family:'Fraunces',serif;font-weight:900;font-size:28px;color:${a.color}">${selfScore}</div></div>
-      <div style="font-size:16px;color:var(--muted2)">vs</div>
-      <div><div style="font-size:10px;color:var(--muted2);text-transform:uppercase;letter-spacing:1px;margin-bottom:2px">Scout</div>
-        <div style="font-family:'Fraunces',serif;font-weight:900;font-size:28px;color:${a.color}">${scoutScore}</div></div>
+  const scoreDisplay = `
+    <div style="display:flex;align-items:center;gap:8px;margin-bottom:14px">
+      <div style="font-family:'Fraunces',serif;font-weight:900;font-size:28px;color:${a.color}">${selfScore}</div>
+      <div style="font-size:12px;color:var(--muted);line-height:1.4">Current score<br><span style="color:${a.color}">↑ trend improving</span></div>
     </div>`;
 
   if (unlocked) {
     const content = INSIGHTS[key];
-    body.innerHTML = `${scoreCompare}
+    body.innerHTML = `${scoreDisplay}
       <div class="insight-section">
         <div class="insight-section-title"><span style="color:var(--teal)">▲</span> Strengths</div>
         <div class="insight-text">${content.strengths}</div>
@@ -144,7 +140,7 @@ function openInsight(key) {
   } else {
     body.innerHTML = `<div class="insight-locked">
       <div class="insight-locked-icon">🔒</div>
-      ${scoreCompare}
+      <div style="font-family:'Fraunces',serif;font-weight:700;font-size:22px;color:${a.color};margin-bottom:8px">${selfScore}</div>
       <div class="insight-locked-text">The written breakdown for <strong>${a.name}</strong> is not yet unlocked. Earn more season points to reach the next level.</div>
     </div>`;
   }
@@ -260,7 +256,7 @@ function renderSessionCards() {
   // Scout evaluation card
   const scoutBars = ATTRS.map(a => {
     const v = SCOUT_EVAL.scores[a.key];
-    const label = a.key === 'focus' ? 'Focus (JM)' : a.name;
+    const label = a.name;
     return `<div class="hist-mini-row"><div class="hist-mini-label">${label}</div>
       <div class="hist-mini-bg"><div class="hist-mini-bar" style="width:${v}%;background:${a.color}"></div></div>
       <div class="hist-mini-val" style="color:${a.color}">${v}</div></div>`;
