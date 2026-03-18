@@ -242,3 +242,4 @@ const POINTS_LOG = [
 
 // Compute total earned from log
 const TOTAL_SEASON_POINTS = POINTS_LOG.reduce((sum, e) => sum + e.pts, 0);
+
