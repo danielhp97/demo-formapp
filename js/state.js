@@ -51,3 +51,4 @@ function isAttrUnlocked(key) {
 function addPoints(pts) {
   state.seasonPoints += pts;
 }
+
