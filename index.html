@@ -54,7 +54,7 @@
   <!-- ════ DASHBOARD ════ -->
   <div class="page active" id="page-dashboard">
     <div class="topbar">
-      <div><div class="page-title">Morning, Vital</div><div class="page-sub">Season 2025/26</div></div>
+      <div><div class="page-title">Morning, Player</div><div class="page-sub">Season 2025/26</div></div>
       <div class="notif-btn" onclick="openNotifPanel()"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M18 8A6 6 0 006 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 01-3.46 0"/></svg><div class="notif-dot" id="notif-dot"></div></div>
     </div>
 
@@ -231,7 +231,7 @@
     <div class="topbar"><div><div class="page-title">Settings</div><div class="page-sub">Account, preferences & data</div></div></div>
     <div style="text-align:center;margin-bottom:20px">
       <div style="width:60px;height:60px;border-radius:50%;background:linear-gradient(135deg,var(--rose),var(--sand));display:flex;align-items:center;justify-content:center;font-family:'Fraunces',serif;font-weight:700;font-size:22px;color:#fff;margin:0 auto 10px">V</div>
-      <div style="font-family:'Fraunces',serif;font-weight:700;font-size:16px">Vital</div>
+      <div style="font-family:'Fraunces',serif;font-weight:700;font-size:16px">Player</div>
       <div style="font-size:12px;color:var(--muted)">Athlete · Season 2025/26</div>
     </div>
     <div class="section-label">Notifications</div>
@@ -276,4 +276,10 @@
 <div class="toast" id="toast">✓ Done</div>
 
 <!-- Scripts: load order matters -->
-<script data-cfasync="false"
+<script data-cfasync="false" src="js/data.js"></script>
+<script src="js/state.js"></script>
+<script src="js/ui.js"></script>
+<script src="js/app.js"></script>
+
+</body>
+</html>

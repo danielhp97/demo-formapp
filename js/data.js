@@ -4,7 +4,7 @@
 // ══════════════════════════════════════════════════════
 
 const ATHLETE = {
-  name: 'Vital',
+  name: 'Player',
   initials: 'V',
   season: '2025/26',
 };
