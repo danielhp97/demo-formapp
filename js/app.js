@@ -127,3 +127,4 @@ document.addEventListener('DOMContentLoaded', () => {
   renderPointsLog();
   renderCompletedTasks();
 });
+
