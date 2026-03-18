@@ -83,12 +83,11 @@ const SESSIONS = [
 ];
 
 // ── Scout evaluation — REAL DATA ──
-// Avaliação_Scouts_VitalTable_11.csv (2 scouts, 5 attrs)
-// Avaliação_Vital_Foco_JMTable_1.csv (JM, Focus only)
+// Real scout evaluation data
 const SCOUT_EVAL = {
   date: 'Season 2025/26',
-  label: 'Scout Evaluation (2 scouts + JM)',
-  note: '5 attributes averaged from 2 scouts · Focus evaluated separately by JM',
+  label: 'Scout Evaluation',
+  note: 'External evaluation · All 6 attributes',
   scores: { resilience:100, discipline:100, gameiq:97, influence:100, intensity:100, focus:88 },
 };
 
